@@ -23,7 +23,7 @@ bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(
         dframe$bullet <- paste(gsub(".x3p", "", path), x)
         dframe
     }
-    if (is.null(bullet)) bullet <- read.x3pplus(path, transpose = transpose)
+    if (is.null(bullet)) bullet <- read_x3p(path, transpose = transpose)
     dbr111 <- fortify_x3p(bullet)
     
     done <- FALSE
@@ -48,7 +48,6 @@ bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(
 
 #' Read a crosscut from a 3d surface file
 #' 
-#' @importFrom x3pr read.x3p
 #' @param path path to an x3p file. The path will only be considered, if bullet is not specified.
 #' @param x level of the crosscut to be taken. If this level does not exist, the crosscut with the closest level is returned.
 #' @param bullet alternative access to the surface measurements. 
@@ -57,7 +56,7 @@ bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(
 #' @importFrom zoo na.trim
 #' @export
 get_crosscut <- function(path = NULL, x = 243.75, bullet = NULL, transpose = FALSE) {
-    if (is.null(bullet)) bullet <- read.x3pplus(path, transpose = transpose)
+    if (is.null(bullet)) bullet <- read_x3p(path, transpose = transpose)
     dbr111 <- na.trim(fortify_x3p(bullet))
     
     pickx <- dbr111$x[which.min(abs(x - unique(dbr111$x)))]

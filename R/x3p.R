@@ -4,25 +4,47 @@
 #' @param transpose If TRUE, transpose the resulting matrix
 #' 
 #' @export
-#' @importFrom xml2 
+#' @import xml2 
+#' @import purrr
+#' @importFrom utils unzip
 read_x3p <- function(path, transpose = FALSE) {
-    bullet_info <- read_xml(result[2]) 
-
-    if (transpose) {
-        bullet$surface.matrix <- t(bullet$surface.matrix)
-        temp <- bullet$header.info$num.pts.line
-        bullet$header.info$num.pts.line <- bullet$header.info$num.lines
-        bullet$header.info$num.lines <- temp
-    } 
+    ## Create a temp directory to unzip x3p file
+    mydir <- tempdir()
+    result <- unzip(path, exdir = mydir)
     
-    return(bullet)
+    ## Should contain data.bin and valid.bin
+    bullet_data_dir <- file.path(mydir, "bindata", dir(file.path(mydir, "bindata")))
+    bullet_data <- result[1]
+    
+    ## Get the information on the bullet
+    bullet_info <- read_xml(result[2])
+    bullet_children <- xml_children(bullet_info)
+    bullet_childinfo <- xml_children(bullet_children)
+    
+    ## Convert to a list
+    bullet_info_list <- lapply(bullet_childinfo, as_list)
+    bullet_info_unlist <- unlist(bullet_info_list, recursive = FALSE)
+    
+    ## Get the data types
+    data_types <- sapply(bullet_info_list[[3]], `[[`, 2)
+    
+    ## Read the binary matrix
+    sizes <- as.numeric(c(bullet_info_unlist$SizeX[[1]], bullet_info_unlist$SizeY[[1]], bullet_info_unlist$SizeZ[[1]]))
+    datamat <- matrix(readBin(bullet_data, what = numeric(), n = prod(sizes)),
+                      nrow = sizes[as.numeric(!transpose) + 1],
+                      ncol = sizes[2 - as.numeric(!transpose)])
+    
+    #plot_ly(z = ~datamat) %>% add_surface()
+    
+    return(list(header.info = bullet_info_list,
+                surface.matrix = datamat))
 }
 
 #' Convert a list of x3p file into a data frame
 #' 
 #' x3p format consists of a list with header info and a 2d matrix of scan depths. 
 #' fortify_x3p turn the matrix into a variable within a data frame, using the parameters of the header as necessary.
-#' @param x3p a file in x3p format as return by function read.x3p
+#' @param x3p a file in x3p format as return by function read_x3p
 #' @return data frame with variables x, y, and value
 #' @export
 fortify_x3p <- function(x3p) {
@@ -61,7 +83,7 @@ unfortify_x3p <- function(df) {
 #' @param byxy (vector) of numeric value indicating the sapling resolution. If a single number, the same resolution is used for x and y.
 #' @return subset of the input variable
 #' @export
-sample.x3p <- function(dframe, byxy=c(2,2)) {
+sample_x3p <- function(dframe, byxy = c(2,2)) {
     x <- NULL
     y <- NULL
     # use fortified data set
@@ -80,7 +102,7 @@ sample.x3p <- function(dframe, byxy=c(2,2)) {
 #' x3p file of a 3d topological bullet surface is processed at surface crosscut x, 
 #' the bullet grooves in the crosscuts are identified and removed, and a loess smooth 
 #' is used (see \code{?loess} for details) to remove the big structure. 
-#' @param bullet file as returned from read.x3p
+#' @param bullet file as returned from read_x3p
 #' @param name name of the bullet
 #' @param x (vector) of surface crosscuts to process. 
 #' @param grooves The grooves to use as a two element vector, if desired

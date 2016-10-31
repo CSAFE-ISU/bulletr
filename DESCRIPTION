@@ -11,6 +11,7 @@ Description: Analyze bullet lands using nonparametric methods. We provide a
     barrel.
 Imports:
     xml2,
+    purrr,
     zoo,
     ggplot2,
     plyr,

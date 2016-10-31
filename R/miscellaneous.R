@@ -6,7 +6,7 @@
 #' A note on timing: at the moment calculating the twist rate for a bullet land takes several minutes.
 #' XXX TODO XXX make the different methods a parameter. Also, accept other input than the path - if we start with the flattened bulletland we get results much faster.
 #' @param path to a file in x3p format
-#' @param bullet data in x3p format as returned by function read.x3p
+#' @param bullet data in x3p format as returned by function read_x3p
 #' @param transpose If TRUE, transpose the matrix
 #' @param twistlimit Constraint the possible twist value
 #' @param cutoff Use this for the quantile cutoff
@@ -26,7 +26,7 @@ getTwist <- function(path, bullet = NULL, transpose = FALSE, twistlimit = NULL, 
     r.squared <- NULL
     r.squared.robust <- NULL
     
-  if (is.null(bullet)) bullet <- read.x3pplus(path, transpose = transpose)
+  if (is.null(bullet)) bullet <- read_x3p(path, transpose = transpose)
   cat(path)
   cat("\n")
   
@@ -118,7 +118,7 @@ getTwist <- function(path, bullet = NULL, transpose = FALSE, twistlimit = NULL, 
 
 #' @importFrom plotly plot_ly
 plot_3d_land <- function(path, bullet, groove, x = 99.84) {
-    br111 <- read.x3p(path)
+    br111 <- read_x3p(path)
     inds <- which(bullet$y > groove$groove[1] & bullet$y < groove$groove[2])
     surfmat <- br111$surface.matrix
     

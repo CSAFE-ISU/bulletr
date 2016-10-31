@@ -31,14 +31,14 @@ read_x3p <- function(path, transpose = FALSE) {
     sizes <- as.numeric(c(bullet_info_unlist$SizeX[[1]], bullet_info_unlist$SizeY[[1]], bullet_info_unlist$SizeZ[[1]]))
     increments <- as.numeric(c(bullet_info_unlist$CX$Increment[[1]], bullet_info_unlist$CY$Increment[[1]], bullet_info_unlist$CZ$Increment[[1]]))
     datamat <- matrix(readBin(bullet_data, what = numeric(), n = prod(sizes)),
-                      nrow = sizes[as.numeric(!transpose) + 1],
-                      ncol = sizes[2 - as.numeric(!transpose)])
+                      nrow = sizes[2 - as.numeric(!transpose)],
+                      ncol = sizes[as.numeric(!transpose) + 1])
     
     ## Store some metadata
-    bullet_metadata <- list(num.pts.line = sizes[as.numeric(!transpose) + 1],
-                            num.lines = sizes[2 - as.numeric(!transpose)],
-                            x.inc = increments[as.numeric(!transpose) + 1],
-                            y.inc = increments[2 - as.numeric(!transpose)])
+    bullet_metadata <- list(num.pts.line = sizes[2 - as.numeric(!transpose)],
+                            num.lines = sizes[as.numeric(!transpose) + 1],
+                            x.inc = increments[2 - as.numeric(!transpose)],
+                            y.inc = increments[as.numeric(!transpose) + 1])
     
     #plot_ly(z = ~datamat) %>% add_surface()
     

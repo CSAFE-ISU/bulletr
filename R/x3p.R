@@ -5,7 +5,6 @@
 #' 
 #' @export
 #' @import xml2 
-#' @import purrr
 #' @importFrom utils unzip
 read_x3p <- function(path, transpose = FALSE) {
     ## Create a temp directory to unzip x3p file
@@ -30,13 +29,20 @@ read_x3p <- function(path, transpose = FALSE) {
     
     ## Read the binary matrix
     sizes <- as.numeric(c(bullet_info_unlist$SizeX[[1]], bullet_info_unlist$SizeY[[1]], bullet_info_unlist$SizeZ[[1]]))
+    increments <- as.numeric(c(bullet_info_unlist$CX$Increment[[1]], bullet_info_unlist$CY$Increment[[1]], bullet_info_unlist$CZ$Increment[[1]]))
     datamat <- matrix(readBin(bullet_data, what = numeric(), n = prod(sizes)),
                       nrow = sizes[as.numeric(!transpose) + 1],
                       ncol = sizes[2 - as.numeric(!transpose)])
     
+    ## Store some metadata
+    bullet_metadata <- list(num.pts.line = sizes[as.numeric(!transpose) + 1],
+                            num.lines = sizes[2 - as.numeric(!transpose)],
+                            x.inc = increments[1],
+                            y.inc = increments[2])
+    
     #plot_ly(z = ~datamat) %>% add_surface()
     
-    return(list(header.info = bullet_info_list,
+    return(list(header.info = bullet_metadata,
                 surface.matrix = datamat))
 }
 

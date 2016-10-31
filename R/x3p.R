@@ -37,8 +37,8 @@ read_x3p <- function(path, transpose = FALSE) {
     ## Store some metadata
     bullet_metadata <- list(num.pts.line = sizes[as.numeric(!transpose) + 1],
                             num.lines = sizes[2 - as.numeric(!transpose)],
-                            x.inc = increments[1],
-                            y.inc = increments[2])
+                            x.inc = increments[as.numeric(!transpose) + 1],
+                            y.inc = increments[2 - as.numeric(!transpose)])
     
     #plot_ly(z = ~datamat) %>% add_surface()
     

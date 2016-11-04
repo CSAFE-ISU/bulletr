@@ -16,4 +16,9 @@ data frame with variables x, y, and value
 x3p format consists of a list with header info and a 2d matrix of scan depths. 
 fortify_x3p turn the matrix into a variable within a data frame, using the parameters of the header as necessary.
 }
+\examples{
+data(br411)
+br411_fort <- fortify_x3p(br411)
+head(br411_fort)
+}
 

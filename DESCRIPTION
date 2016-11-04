@@ -1,6 +1,6 @@
 Package: bulletr
 Title: Algorithms for Matching Bullet Lands
-Maintainer: Heike Hofmann <hofmann@iastate.edu>
+Maintainer: Eric Hare <erichare@iastate.edu>
 Author: Heike Hofmann, Eric Hare
 Version: 0.1
 License: GPL-3
@@ -21,3 +21,4 @@ Imports:
     smoother
 Depends: R (>= 3.1)    
 RoxygenNote: 5.0.1
+LazyData: true

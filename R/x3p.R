@@ -6,6 +6,12 @@
 #' @export
 #' @import xml2 
 #' @importFrom utils unzip
+#' 
+#' @examples
+#' \dontrun{
+#' br411 <- read.x3p("Br4 Bullet 4-1.x3p")
+#' }
+#'
 read_x3p <- function(path, transpose = FALSE) {
     ## Create a temp directory to unzip x3p file
     mydir <- tempdir()
@@ -53,6 +59,10 @@ read_x3p <- function(path, transpose = FALSE) {
 #' @param x3p a file in x3p format as return by function read_x3p
 #' @return data frame with variables x, y, and value
 #' @export
+#' @examples 
+#' data(br411)
+#' br411_fort <- fortify_x3p(br411)
+#' head(br411_fort)
 fortify_x3p <- function(x3p) {
     info <- x3p[[1]]
     
@@ -71,6 +81,11 @@ fortify_x3p <- function(x3p) {
 #' @param df A data frame produced by fortify_x3p
 #' @return An x3p object
 #' @export
+#' @examples 
+#' data(br411)
+#' br411_fort <- fortify_x3p(br411)
+#' br411_unfort <- unfortify_x3p(br411_fort)
+#' identical(br411_unfort, br411)
 unfortify_x3p <- function(df) {
     my.info <- attr(df, "info")
     my.lst <- list(header.info = my.info, 
@@ -89,7 +104,12 @@ unfortify_x3p <- function(df) {
 #' @param byxy (vector) of numeric value indicating the sapling resolution. If a single number, the same resolution is used for x and y.
 #' @return subset of the input variable
 #' @export
-sample_x3p <- function(dframe, byxy = c(2,2)) {
+#' @examples
+#' data(br411)
+#' br411_fort <- fortify_x3p(br411)
+#' br411_sample <- sample_x3p(br411_fort, byxy = c(4, 4))
+#' head(br411_sample)
+sample_x3p <- function(dframe, byxy = c(2, 2)) {
     x <- NULL
     y <- NULL
     # use fortified data set
@@ -117,6 +137,9 @@ sample_x3p <- function(dframe, byxy = c(2,2)) {
 #' @return data frame
 #' @importFrom dplyr bind_rows %>%
 #' @export
+#' @examples
+#' data(br411)
+#' br411_processed <- processBullets(br411, name = "br411")
 processBullets <- function(bullet, name = "", x = 100, grooves = NULL, span = 0.75, ...) {
     crosscuts <- unique(fortify_x3p(bullet)$x)
     crosscuts <- crosscuts[crosscuts >= min(x)]
@@ -136,3 +159,10 @@ processBullets <- function(bullet, name = "", x = 100, grooves = NULL, span = 0.
     
     data.frame(lof, bullet = name, stringsAsFactors = FALSE)
 }
+
+#' 3d topological surface measurements for one land of a bullet from the Hamby study
+#' 
+#' Some more info - not sure at the moment which bullet this is. Describe structure.
+#' @format a list
+"br411"
+

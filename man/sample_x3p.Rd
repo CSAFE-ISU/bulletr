@@ -17,4 +17,10 @@ subset of the input variable
 \description{
 Sample every X element of a data frame in x and y direction
 }
+\examples{
+data(br411)
+br411_fort <- fortify_x3p(br411)
+br411_sample <- sample_x3p(br411_fort, byxy = c(4, 4))
+head(br411_sample)
+}
 

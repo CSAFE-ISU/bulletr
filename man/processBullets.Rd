@@ -28,4 +28,8 @@ x3p file of a 3d topological bullet surface is processed at surface crosscut x,
 the bullet grooves in the crosscuts are identified and removed, and a loess smooth 
 is used (see \code{?loess} for details) to remove the big structure.
 }
+\examples{
+data(br411)
+br411_processed <- processBullets(br411, name = "br411")
+}
 

@@ -4,7 +4,8 @@
 \alias{get_peaks_nist}
 \title{Identify the location and the depth of peaks and heights at a crosscut}
 \usage{
-get_peaks_nist(loessdata, column = "resid", smoothfactor = 35)
+get_peaks_nist(loessdata, column = "resid", smoothfactor = 35,
+  striae = TRUE, window = TRUE)
 }
 \arguments{
 \item{loessdata}{export from rollapply}
@@ -12,6 +13,10 @@ get_peaks_nist(loessdata, column = "resid", smoothfactor = 35)
 \item{column}{The column which should be smoothed}
 
 \item{smoothfactor}{set to default of 35. Smaller values will pick up on smaller changes in the crosscut.}
+
+\item{striae}{If TRUE, show the detected striae on the plot}
+
+\item{window}{If TRUE, show the window of the striae on the plot}
 }
 \value{
 list of several objects:

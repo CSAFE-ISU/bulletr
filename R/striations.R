@@ -61,12 +61,14 @@ get_peaks <- function(loessdata, column = "resid", smoothfactor = 35, striae = T
 #' @param loessdata export from rollapply 
 #' @param column The column which should be smoothed
 #' @param smoothfactor set to default of 35. Smaller values will pick up on smaller changes in the crosscut.
+#' @param striae If TRUE, show the detected striae on the plot
+#' @param window If TRUE, show the window of the striae on the plot
 #' @return list of several objects: 
 #' @importFrom zoo rollapply
 #' @importFrom smoother smth.gaussian
 #' @import ggplot2
 #' @export
-get_peaks_nist <- function(loessdata, column = "resid", smoothfactor = 35) {
+get_peaks_nist <- function(loessdata, column = "resid", smoothfactor = 35, striae = TRUE, window = TRUE) {
     y <- NULL
     xmin <- NULL
     xmax <- NULL
@@ -102,10 +104,10 @@ get_peaks_nist <- function(loessdata, column = "resid", smoothfactor = 35) {
                         type = type, extrema = extrema, heights = heights)    
     dframe <- data.frame(y=loessdata$y, smoothed=smoothed)
     p <- qplot(data=dframe, x=y, y=smoothed, geom = "line") +
-        theme_bw() +
-        geom_rect(aes(xmin=xmin, xmax=xmax), ymin=-6, ymax=6, data=lines, colour="grey60", alpha=0.2, inherit.aes = FALSE) +
-        geom_vline(xintercept = loessdata$y[test], colour = "red") +
-        geom_vline(xintercept = loessdata$y[test2], colour = "blue") 
+        theme_bw()
+    if (window) p <- p + geom_rect(aes(xmin=xmin, xmax=xmax), ymin=-6, ymax=6, data=lines, colour="grey60", alpha=0.2, inherit.aes = FALSE)
+    if (striae) p <- p + geom_vline(xintercept = loessdata$y[test], colour = "red")
+    if (striae) p <- p + geom_vline(xintercept = loessdata$y[test2], colour = "blue")
     
     return(list(peaks = peaks, valleys = valleys, extrema = extrema, 
                 peaks.heights = peaks.heights, valleys.heights = valleys.heights, 

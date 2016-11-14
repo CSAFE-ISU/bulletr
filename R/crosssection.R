@@ -7,9 +7,8 @@
 #' @param xlimits vector of values between which to check for cross sections in a stable region
 #' @param minccf minimal value of cross correlation to indicate a stable region
 #' @param span The span for the loess smooth function
-#' @param transpose if TRUE, transpose the x3p matrix
 #' @export
-bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(50, 500), minccf = 0.9, span = 0.03, transpose = FALSE) {
+bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(50, 500), minccf = 0.9, span = 0.03) {
     get_cc <- function(x, mybullet) {
         pickx <- mybullet$x[which.min(abs(x - unique(mybullet$x)))]
         
@@ -23,7 +22,7 @@ bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(
         dframe$bullet <- paste(gsub(".x3p", "", path), x)
         dframe
     }
-    if (is.null(bullet)) bullet <- read_x3p(path, transpose = transpose)
+    if (is.null(bullet)) bullet <- read_x3p(path)
     dbr111 <- fortify_x3p(bullet)
     
     done <- FALSE
@@ -51,12 +50,11 @@ bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(
 #' @param path path to an x3p file. The path will only be considered, if bullet is not specified.
 #' @param x level of the crosscut to be taken. If this level does not exist, the crosscut with the closest level is returned.
 #' @param bullet alternative access to the surface measurements. 
-#' @param transpose If TRUE, transpose the matrix
 #' @return data frame 
 #' @importFrom zoo na.trim
 #' @export
-get_crosscut <- function(path = NULL, x = 243.75, bullet = NULL, transpose = FALSE) {
-    if (is.null(bullet)) bullet <- read_x3p(path, transpose = transpose)
+get_crosscut <- function(path = NULL, x = 243.75, bullet = NULL) {
+    if (is.null(bullet)) bullet <- read_x3p(path)
     dbr111 <- na.trim(fortify_x3p(bullet))
     
     pickx <- dbr111$x[which.min(abs(x - unique(dbr111$x)))]

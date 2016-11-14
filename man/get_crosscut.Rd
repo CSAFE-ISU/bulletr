@@ -4,7 +4,7 @@
 \alias{get_crosscut}
 \title{Read a crosscut from a 3d surface file}
 \usage{
-get_crosscut(path = NULL, x = 243.75, bullet = NULL, transpose = FALSE)
+get_crosscut(path = NULL, x = 243.75, bullet = NULL)
 }
 \arguments{
 \item{path}{path to an x3p file. The path will only be considered, if bullet is not specified.}
@@ -12,8 +12,6 @@ get_crosscut(path = NULL, x = 243.75, bullet = NULL, transpose = FALSE)
 \item{x}{level of the crosscut to be taken. If this level does not exist, the crosscut with the closest level is returned.}
 
 \item{bullet}{alternative access to the surface measurements.}
-
-\item{transpose}{If TRUE, transpose the matrix}
 }
 \value{
 data frame

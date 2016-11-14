@@ -4,12 +4,10 @@
 \alias{read_x3p}
 \title{Read an x3p file as an R Data Frame}
 \usage{
-read_x3p(path, transpose = FALSE)
+read_x3p(path)
 }
 \arguments{
 \item{path}{The file path to the x3p file}
-
-\item{transpose}{If TRUE, transpose the resulting matrix}
 }
 \description{
 Read an x3p file as an R Data Frame

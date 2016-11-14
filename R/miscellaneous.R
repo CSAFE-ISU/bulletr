@@ -7,7 +7,6 @@
 #' XXX TODO XXX make the different methods a parameter. Also, accept other input than the path - if we start with the flattened bulletland we get results much faster.
 #' @param path to a file in x3p format
 #' @param bullet data in x3p format as returned by function read_x3p
-#' @param transpose If TRUE, transpose the matrix
 #' @param twistlimit Constraint the possible twist value
 #' @param cutoff Use this for the quantile cutoff
 #' @return numeric value estimating the twist
@@ -21,12 +20,12 @@
 #' load("data/b1.rda")
 #' twist <- getTwist(path="barrel 1 bullet 1", bullet = b1, twistlimit=c(-2,0)*1.5625)
 #' }
-getTwist <- function(path, bullet = NULL, transpose = FALSE, twistlimit = NULL, cutoff = .75) {
+getTwist <- function(path, bullet = NULL, twistlimit = NULL, cutoff = .75) {
     x <- NULL
     r.squared <- NULL
     r.squared.robust <- NULL
     
-  if (is.null(bullet)) bullet <- read_x3p(path, transpose = transpose)
+  if (is.null(bullet)) bullet <- read_x3p(path)
   cat(path)
   cat("\n")
   

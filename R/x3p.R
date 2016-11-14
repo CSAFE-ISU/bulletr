@@ -1,7 +1,6 @@
 #' Read an x3p file as an R Data Frame
 #' 
 #' @param path The file path to the x3p file
-#' @param transpose If TRUE, transpose the resulting matrix
 #' 
 #' @export
 #' @import xml2 
@@ -12,7 +11,7 @@
 #' br411 <- read.x3p("Br4 Bullet 4-1.x3p")
 #' }
 #'
-read_x3p <- function(path, transpose = FALSE) {
+read_x3p <- function(path) {
     ## Create a temp directory to unzip x3p file
     mydir <- tempdir()
     result <- unzip(path, exdir = mydir)
@@ -36,15 +35,22 @@ read_x3p <- function(path, transpose = FALSE) {
     ## Read the binary matrix
     sizes <- as.numeric(c(bullet_info_unlist$SizeX[[1]], bullet_info_unlist$SizeY[[1]], bullet_info_unlist$SizeZ[[1]]))
     increments <- as.numeric(c(bullet_info_unlist$CX$Increment[[1]], bullet_info_unlist$CY$Increment[[1]], bullet_info_unlist$CZ$Increment[[1]]))
-    datamat <- t(matrix(readBin(bullet_data, what = numeric(), n = prod(sizes)),
-                      nrow = sizes[2 - as.numeric(!transpose)],
-                      ncol = sizes[as.numeric(!transpose) + 1])) * 1e6
+    datamat <- matrix(readBin(bullet_data, what = numeric(), n = prod(sizes)),
+                      nrow = sizes[1],
+                      ncol = sizes[2]) * 1e6
+    
+    if (sizes[2] > sizes[1]) {
+        sizes <- sizes[c(2, 1, 3)]
+        increments <- increments[c(2, 1, 3)]
+        
+        datamat <- t(datamat)
+    }
     
     ## Store some metadata
-    bullet_metadata <- list(num.pts.line = sizes[2 - as.numeric(!transpose)],
-                            num.lines = sizes[as.numeric(!transpose) + 1],
-                            x.inc = increments[2 - as.numeric(!transpose)] * 1e6,
-                            y.inc = increments[as.numeric(!transpose) + 1] * 1e6)
+    bullet_metadata <- list(num.pts.line = sizes[1],
+                            num.lines = sizes[2],
+                            x.inc = increments[2] * 1e6,
+                            y.inc = increments[1] * 1e6)
     
     #plot_ly(z = ~datamat) %>% add_surface()
     

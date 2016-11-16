@@ -47,10 +47,10 @@ read_x3p <- function(path) {
     }
     
     ## Store some metadata
-    bullet_metadata <- list(num.pts.line = sizes[2],
-                            num.lines = sizes[1],
-                            x.inc = increments[2] * 1e6,
-                            y.inc = increments[1] * 1e6)
+    bullet_metadata <- list(num_profiles = sizes[2],
+                            num_obs_per_profile = sizes[1],
+                            profile_inc = increments[2] * 1e6,
+                            obs_inc = increments[1] * 1e6)
     
     #plot_ly(z = ~datamat) %>% add_surface()
     
@@ -72,10 +72,10 @@ read_x3p <- function(path) {
 fortify_x3p <- function(x3p) {
     info <- x3p[[1]]
     
-    df <- data.frame(expand.grid(x=1:info$num.pts.line, y=1:info$num.lines), 
+    df <- data.frame(expand.grid(x=1:info$num_profiles, y=1:info$num_obs_per_profile), 
                      value=as.vector(t(x3p[[2]])))
-    df$x <- (df$x-1) * info$x.inc
-    df$y <- (df$y-1) * info$y.inc
+    df$x <- (df$x-1) * info$profile_inc
+    df$y <- (df$y-1) * info$obs_inc
     
     attr(df, "info") <- info
     

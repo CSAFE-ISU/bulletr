@@ -47,8 +47,8 @@ read_x3p <- function(path) {
     }
     
     ## Store some metadata
-    bullet_metadata <- list(num.pts.line = sizes[1],
-                            num.lines = sizes[2],
+    bullet_metadata <- list(num.pts.line = sizes[2],
+                            num.lines = sizes[1],
                             x.inc = increments[2] * 1e6,
                             y.inc = increments[1] * 1e6)
     

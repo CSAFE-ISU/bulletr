@@ -4,10 +4,12 @@
 \alias{read_x3p}
 \title{Read an x3p file as an R Data Frame}
 \usage{
-read_x3p(path)
+read_x3p(path, profiley = TRUE)
 }
 \arguments{
 \item{path}{The file path to the x3p file}
+
+\item{profiley}{If TRUE, rotate the matrix (if necessary) to ensure a profile is taken across y}
 }
 \description{
 Read an x3p file as an R Data Frame

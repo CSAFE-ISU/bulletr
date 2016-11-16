@@ -1,6 +1,7 @@
 #' Read an x3p file as an R Data Frame
 #' 
 #' @param path The file path to the x3p file
+#' @param profiley If TRUE, rotate the matrix (if necessary) to ensure a profile is taken across y
 #' 
 #' @export
 #' @import xml2 
@@ -11,7 +12,7 @@
 #' br411 <- read.x3p("Br4 Bullet 4-1.x3p")
 #' }
 #'
-read_x3p <- function(path) {
+read_x3p <- function(path, profiley = TRUE) {
     ## Create a temp directory to unzip x3p file
     mydir <- tempdir()
     result <- unzip(path, exdir = mydir)
@@ -39,11 +40,13 @@ read_x3p <- function(path) {
                       nrow = sizes[1],
                       ncol = sizes[2]) * 1e6
     
-    if (sizes[2] > sizes[1]) {
+    ## Rotate the matrix
+    if (profiley && sizes[2] > sizes[1]) {
         sizes <- sizes[c(2, 1, 3)]
         increments <- increments[c(2, 1, 3)]
         
         datamat <- t(datamat)
+        datamat <- apply(datamat, 2, rev)
     }
     
     ## Store some metadata

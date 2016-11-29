@@ -31,7 +31,7 @@ getTwist <- function(path, bullet = NULL, twistlimit = NULL, cutoff = .75) {
   
   gg115 <- processBullets(
     bullet, 
-    x=bullet$header.info$x.inc*c(0,bullet$header.info$num.pts.line), 
+    x=bullet$header.info$profile_inc*c(0,bullet$header.info$num_profiles), 
     name=path)
   # qplot(data=gg115, x=y, y=x, fill=resid, geom="tile")+scale_fill_gradient2()
   
@@ -115,6 +115,11 @@ getTwist <- function(path, bullet = NULL, twistlimit = NULL, cutoff = .75) {
              twistC=twistC, min.r.squaredC=q75C, twistRobustC=twistRobustC, min.r.squared.robustC=q75rC)
 }
 
+#' Plot a bullet land using plotly
+#' 
+#' @param path The path to the x3p file
+#' @param bullet If not null, use this pre-loaded bullet
+#' 
 #' @importFrom plotly plot_ly
 #' @export
 plot_3d_land <- function(path, bullet = NULL) {

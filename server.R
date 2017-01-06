@@ -1,32 +1,22 @@
 library(shiny)
 library(dplyr)
 library(tidyr)
-library(XML)
-library(x3prplus)
+library(bulletr)
 library(ggplot2)
 library(plotly)
 library(gridExtra)
-library(zoo)
-library(reshape2)
 library(randomForest)
 
-options(shiny.maxRequestSize=30*1024^2) 
+options(shiny.maxRequestSize = 30*1024^2) 
 
 shinyServer(function(input, output, session) {
     
-    values <- reactiveValues(path1 = NULL,
-                             path2 = NULL,
-                             transpose1 = FALSE,
-                             transpose2 = FALSE)
+    values <- reactiveValues(path1 = NULL, path2 = NULL)
     
     bullet1 <- reactive({
         if (!is.null(input$file1) && input$choose1 == "Upload Image") values$path1 <- input$file1$datapath else values$path1 <- file.path("images", input$choose1)
         
-        myfile <- x3prplus::read.x3pplus(values$path1)
-        if (nrow(myfile[[2]]) < ncol(myfile[[2]])) {
-            myfile <- x3prplus::read.x3pplus(values$path1, transpose = TRUE)    
-            values$transpose1 <- TRUE
-        }
+        myfile <- read_x3p(values$path1)
         
         return(myfile)
     })
@@ -34,11 +24,7 @@ shinyServer(function(input, output, session) {
     bullet2 <- reactive({
         if (!is.null(input$file2) && input$choose2 == "Upload Image") values$path2 <- input$file2$datapath else values$path2 <- file.path("images", input$choose2)
         
-        myfile <- x3prplus::read.x3pplus(values$path2)
-        if (nrow(myfile[[2]]) < ncol(myfile[[2]])) {
-            myfile <- x3prplus::read.x3pplus(values$path2, transpose = TRUE)
-            values$transpose2 <- TRUE
-        }
+        myfile <- read_x3p(values$path2)
         
         return(myfile)
     })
@@ -136,13 +122,11 @@ shinyServer(function(input, output, session) {
             withProgress(message = "Calculating CCF...", expr = {
                 crosscut1 <- bulletCheckCrossCut(values$path1,
                                                  bullet = bullet1(),
-                                                 xlimits = seq(25, 500, by = 25), 
-                                                 transpose = values$transpose1)
+                                                 xlimits = seq(25, 500, by = 25))
                 
                 crosscut2 <- bulletCheckCrossCut(values$path2, 
                                                  bullet = bullet2(),
-                                                 xlimits = seq(25, 500, by = 25), 
-                                                 transpose = values$transpose2)
+                                                 xlimits = seq(25, 500, by = 25))
                 
                 updateSliderInput(session, "xcoord1", value = crosscut1)
                 updateSliderInput(session, "xcoord2", value = crosscut2 + ncol(theSurface()) / 2)
@@ -329,7 +313,7 @@ shinyServer(function(input, output, session) {
     myalign <- reactive({
         if (is.null(smoothed())) return(NULL)
 
-        x3prplus:::bulletAlign(data = smoothed())
+        bulletAlign(data = smoothed())
     })
     
     observeEvent(input$stage3, {
@@ -455,10 +439,10 @@ shinyServer(function(input, output, session) {
                   mismatches.per.y = sum(!res$lines$match) / signature.length,
                   #cms = res$maxCMS,
                   cms.per.y = res$maxCMS / signature.length,
-                  #cms2 = x3prplus::maxCMS(subset(res$lines, type==1 | is.na(type))$match),
-                  cms2.per.y = x3prplus::maxCMS(subset(res$lines, type==1 | is.na(type))$match) / signature.length,
-                  #non_cms = x3prplus::maxCMS(!res$lines$match),
-                  non_cms.per.y = x3prplus::maxCMS(!res$lines$match) / signature.length,
+                  #cms2 = bulletr::maxCMS(subset(res$lines, type==1 | is.na(type))$match),
+                  cms2.per.y = bulletr::maxCMS(subset(res$lines, type==1 | is.na(type))$match) / signature.length,
+                  #non_cms = bulletr::maxCMS(!res$lines$match),
+                  non_cms.per.y = bulletr::maxCMS(!res$lines$match) / signature.length,
                   #left_cms = max(knm[1] - km[1], 0),
                   left_cms.per.y = max(knm[1] - km[1], 0) / signature.length,
                   #right_cms = max(km[length(km)] - knm[length(knm)],0),

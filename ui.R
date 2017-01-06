@@ -1,7 +1,7 @@
 library(shiny)
 library(shinythemes)
-library(plotly)
 library(shinyjs)
+library(plotly)
 
 shinyUI(fluidPage(theme = shinytheme("cerulean"),
     headerPanel("Bullet Matching Algorithm"),
@@ -180,6 +180,14 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                    
                    hr(),
                    
+                   h2("Features"),
+                   hr(),
+                   div(id = "info", HTML("Here are the values of the features computed on the aligned bullet signatures.")),
+                   
+                   dataTableOutput("features"),
+                   
+                   hr(),
+                   
                    actionButton("restart", "Restart Algorithm", icon = icon("refresh")),
                    
                    hr()
@@ -226,13 +234,13 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                              plotOutput("peaks1"),
                              plotOutput("peaks2")
             ),
-            conditionalPanel(condition = "input.stage5",
-                 h2("Stage 6: Extract Features"),
-                 hr(),
-                 div(id = "info", HTML("We now have smoothed, aligned bullet signatures with associated peaks and valleys. This gives us a number of features we can extract.<br><br>At this point, there is really nothing left to configure about the algorithm. The features extracted are displayed below. The definitions of each can be found in Hare 2016. Press Confirm Features when you are ready to get your predicted probability of a match.")),
-                 
-                 dataTableOutput("features")
-            ),
+            #conditionalPanel(condition = "input.stage5",
+            #     h2("Stage 6: Extract Features"),
+            #     hr(),
+            #     div(id = "info", HTML("We now have smoothed, aligned bullet signatures with associated peaks and valleys. This gives us a number of features we can extract.<br><br>At this point, there is really nothing left to configure about the algorithm. The features extracted are displayed below. The definitions of each can be found in Hare 2016. Press Confirm Features when you are ready to get your predicted probability of a match.")),
+            #     
+            #     dataTableOutput("features")
+            #),
             
             hr(),
             

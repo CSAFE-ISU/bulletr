@@ -2,6 +2,23 @@ library(shiny)
 library(shinythemes)
 library(shinyjs)
 library(plotly)
+library(RMySQL)
+
+dbname <- "bullets"
+user <- "buser"
+password <- readLines("buser_pass.txt")
+host <- "50.81.214.252"
+
+con <- dbConnect(MySQL(), user = user, password = password,
+                 dbname = dbname, host = host)
+
+bullet_choices <- dbGetQuery(con, "SELECT land_id,name FROM metadata")
+bullet_choices$name <- gsub("images/([a-zA-Z]+) .*/bullets/", "\\1/", bullet_choices$name)
+
+bullids <- bullet_choices$land_id
+names(bullids) <- bullet_choices$name
+
+dbDisconnect(con)
 
 shinyUI(fluidPage(theme = shinytheme("cerulean"),
     headerPanel("Bullet Matching Algorithm"),
@@ -32,13 +49,13 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                  
                  hr(),
                  
-                 selectizeInput("choose1", "Choose First Land", choices = c(dir("images"), "Upload Image")),
+                 selectizeInput("choose1", "Choose First Land", choices = c(bullids, "Upload Image"), selected = bullids[39]),
                  
                  conditionalPanel(condition = "input.choose1 == 'Upload Image'",
                     fileInput("file1", "First Bullet Land")                 
                  ),
                  
-                 selectizeInput("choose2", "Choose Second Land", choices = c(dir("images"), "Upload Image"), selected = dir("images")[2]),
+                 selectizeInput("choose2", "Choose Second Land", choices = c(bullids, "Upload Image"), selected = bullids[47]),
                  
                  conditionalPanel(condition = "input.choose2 == 'Upload Image'",
                     fileInput("file2", "Second Bullet Land")              

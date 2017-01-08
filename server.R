@@ -6,27 +6,64 @@ library(ggplot2)
 library(plotly)
 library(gridExtra)
 library(randomForest)
+library(RMySQL)
+
+dbname <- "bullets"
+user <- "buser"
+password <- readLines("buser_pass.txt")
+host <- "50.81.214.252"
 
 options(shiny.maxRequestSize = 30*1024^2) 
 
 shinyServer(function(input, output, session) {
     
-    values <- reactiveValues(path1 = NULL, path2 = NULL)
-    
     bullet1 <- reactive({
-        if (!is.null(input$file1) && input$choose1 == "Upload Image") values$path1 <- input$file1$datapath else values$path1 <- file.path("images", input$choose1)
-        
-        myfile <- read_x3p(values$path1)
-        
-        return(myfile)
+        withProgress(message = "Loading bullet data...", expr = {
+                
+            if (!is.null(input$file1) && input$choose1 == "Upload Image") {
+                return(read_x3p(input$file1$datapath))    
+            }
+            
+            con <- dbConnect(MySQL(), user = user, password = password,
+                             dbname = dbname, host = host)
+            
+            bullet_metadata <- dbGetQuery(con, paste0("SELECT * FROM metadata WHERE land_id = ", input$choose1))
+            bullet_data <- dbGetQuery(con, paste0("SELECT x,y,value FROM data WHERE land_id = ", input$choose1)) %>%
+                arrange(y, x)
+            
+            attr(bullet_data, "info") <- list(num_profiles = bullet_metadata$num_profiles,
+                                              num_obs_per_profile = bullet_metadata$num_obs_per_profile,
+                                              profile_inc = bullet_metadata$profile_inc,
+                                              obs_inc = bullet_metadata$obs_inc)
+    
+            dbDisconnect(con)
+            
+            return(unfortify_x3p(bullet_data))
+        })
     })
     
     bullet2 <- reactive({
-        if (!is.null(input$file2) && input$choose2 == "Upload Image") values$path2 <- input$file2$datapath else values$path2 <- file.path("images", input$choose2)
-        
-        myfile <- read_x3p(values$path2)
-        
-        return(myfile)
+        withProgress(message = "Loading bullet data...", expr = {
+            if (!is.null(input$file2) && input$choose2 == "Upload Image") {
+                return(read_x3p(input$file2$datapath))    
+            }
+            
+            con <- dbConnect(MySQL(), user = user, password = password,
+                             dbname = dbname, host = host)
+            
+            bullet_metadata <- dbGetQuery(con, paste0("SELECT * FROM metadata WHERE land_id = ", input$choose2))
+            bullet_data <- dbGetQuery(con, paste0("SELECT x,y,value FROM data WHERE land_id = ", input$choose2)) %>%
+                arrange(y, x)
+            
+            attr(bullet_data, "info") <- list(num_profiles = bullet_metadata$num_profiles,
+                                              num_obs_per_profile = bullet_metadata$num_obs_per_profile,
+                                              profile_inc = bullet_metadata$profile_inc,
+                                              obs_inc = bullet_metadata$obs_inc)
+            
+            dbDisconnect(con)
+            
+            return(unfortify_x3p(bullet_data))
+        })
     })
     
     observeEvent(input$confirm0, {
@@ -120,11 +157,11 @@ shinyServer(function(input, output, session) {
     observeEvent(input$stage0, {
         if (!is.null(theSurface()) && input$stage0) {
             withProgress(message = "Calculating CCF...", expr = {
-                crosscut1 <- bulletCheckCrossCut(values$path1,
+                crosscut1 <- bulletCheckCrossCut("",
                                                  bullet = bullet1(),
                                                  xlimits = seq(25, 500, by = 25))
                 
-                crosscut2 <- bulletCheckCrossCut(values$path2, 
+                crosscut2 <- bulletCheckCrossCut("",
                                                  bullet = bullet2(),
                                                  xlimits = seq(25, 500, by = 25))
                 

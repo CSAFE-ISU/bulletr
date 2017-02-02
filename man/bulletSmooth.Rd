@@ -19,4 +19,3 @@ data frame of the same form as the input extended by the vector l30 for the smoo
 \description{
 Smooth the surface of a bullet
 }
-

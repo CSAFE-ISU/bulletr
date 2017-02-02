@@ -19,4 +19,3 @@ data frame of the same form as lines1 and lines2, but consisting of an additiona
 \description{
 Match striation marks across two cross sections based on previously identified peaks and valleys
 }
-

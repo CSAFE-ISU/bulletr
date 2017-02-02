@@ -19,4 +19,3 @@ data frame with predictions and residuals
 \description{
 estimate a circle, find predictive values and resiudals. depending on specification, vertical (regular) residuals or orthogonal residuals are computed.
 }
-

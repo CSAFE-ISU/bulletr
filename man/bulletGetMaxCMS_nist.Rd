@@ -21,4 +21,3 @@ list of matching parameters, data set of the identified striae, and the aligned 
 \description{
 Identify the number of maximum CMS between two bullet lands
 }
-

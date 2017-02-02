@@ -25,4 +25,3 @@ get_grooves(bullet, smoothfactor = 15, adjust = 10, groove_cutoff = 400,
 \description{
 Find the grooves of a bullet land
 }
-

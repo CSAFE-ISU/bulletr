@@ -69,7 +69,7 @@ bulletAlign <- function(data, value = "l30") {
     subLOFx1$y <- subLOFx1$y - min(subLOFx1$y)
     subLOFx2$y <- subLOFx2$y - min(subLOFx2$y)
     
-    ccf <- ccf(subLOFx1$val, subLOFx2$val, plot = FALSE, lag.max=1500, 
+    ccf <- ccf(subLOFx1$val, subLOFx2$val, plot = FALSE, lag.max=(150 + abs(length(subLOFx1$val) - subLOFx2$val)), 
                na.action = na.omit)
     lag <- ccf$lag[which.max(ccf$acf)]
     incr <- min(diff(sort(unique(subLOFx1$y))))

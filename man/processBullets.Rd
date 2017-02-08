@@ -5,7 +5,7 @@
 \title{Process x3p file}
 \usage{
 processBullets(bullet, name = "", x = 100, grooves = NULL, span = 0.75,
-  ...)
+  window = 0, ...)
 }
 \arguments{
 \item{bullet}{file as returned from read_x3p}
@@ -17,6 +17,8 @@ processBullets(bullet, name = "", x = 100, grooves = NULL, span = 0.75,
 \item{grooves}{The grooves to use as a two element vector, if desired}
 
 \item{span}{The span for the loess fit}
+
+\item{window}{The mean window around the ideal crosscut}
 
 \item{...}{Additional arguments, passed to the get_grooves function}
 }

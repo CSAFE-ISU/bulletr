@@ -142,21 +142,32 @@ sample_x3p <- function(dframe, byxy = c(2, 2)) {
 #' @param x (vector) of surface crosscuts to process. 
 #' @param grooves The grooves to use as a two element vector, if desired
 #' @param span The span for the loess fit
+#' @param window The mean window around the ideal crosscut
 #' @param ... Additional arguments, passed to the get_grooves function
 #' @return data frame
-#' @importFrom dplyr bind_rows %>%
+#' @import dplyr
+#' @importFrom zoo na.trim
 #' @export
 #' @examples
 #' data(br411)
 #' br411_processed <- processBullets(br411, name = "br411")
-processBullets <- function(bullet, name = "", x = 100, grooves = NULL, span = 0.75, ...) {
+processBullets <- function(bullet, name = "", x = 100, grooves = NULL, span = 0.75, window = 0, ...) {
+    y <- value <- NULL
+    
     crosscuts <- unique(fortify_x3p(bullet)$x)
     crosscuts <- crosscuts[crosscuts >= min(x)]
     crosscuts <- crosscuts[crosscuts <= max(x)]
     if (length(x) > 2) crosscuts <- crosscuts[crosscuts %in% x]
     
-    list_of_fits <- lapply(crosscuts, function(x) {
-        br111 <- get_crosscut(path = NULL, x = x, bullet = bullet)
+    list_of_fits <- lapply(crosscuts, function(myx) {
+        br111 <- bullet %>%
+            fortify_x3p %>%
+            na.trim %>%
+            filter(x >= myx - window, x <= myx + window) %>%
+            group_by(y) %>%
+            summarise(x = myx, value = mean(value, na.rm = TRUE)) %>%
+            select(x, y, value) %>%
+            as.data.frame
         if (is.null(grooves)) {
             br111.groove <- get_grooves(br111, ...)
         } else {

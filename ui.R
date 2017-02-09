@@ -7,13 +7,13 @@ library(RMySQL)
 dbname <- "bullets"
 user <- "buser"
 password <- readLines("buser_pass.txt")
-host <- "50.81.214.252"
+host <- "10.25.122.176"
 
 con <- dbConnect(MySQL(), user = user, password = password,
                  dbname = dbname, host = host)
 
-bullet_choices <- dbGetQuery(con, "SELECT land_id,name FROM metadata")
-bullet_choices$name <- gsub("images/([a-zA-Z]+) .*/bullets/", "\\1/", bullet_choices$name)
+bullet_choices <- dbGetQuery(con, "SELECT land_id,study,barrel,bullet,land FROM metadata") %>%
+    mutate(name = paste0(study, " Br", barrel, "_B", bullet, "_L", land))
 
 bullids <- bullet_choices$land_id
 names(bullids) <- bullet_choices$name
@@ -212,7 +212,7 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
             conditionalPanel(condition = "!input.stage0 || input.stage5",
                  h2("Stage 0: Preliminary Information"),
                  hr(),
-                 div(id = "info", HTML("This app will walk through the steps used to programmatically determine the probability that two bullets were fired from the same gun barrel. We compare at the bullet land level.<br><br><b>To begin, choose or upload two .x3p files representing the two bullet lands you wish to compare.</b><br><br>We have provided three example files from the Hamby study which you may use - The two lands from Barrel 1 are a match, but Barrel 2 does not match either.<br><br>This work is part of the <a href='http://forensic.stat.iastate.edu'>Center for Statistics and Applications in Forensic Evidence</a> (CSAFE) at <a href='http://www.iastate.edu'>Iowa State University</a>. These procedures are fully open-source and transparent. The code producing the results is given on each page. For more details on the underlying code, please see the <a href='https://github.com/heike/x3prplus'>GitHub repository</a> for the companion R package <b>x3prplus</b>, as well as our publication <a href='http://arxiv.org/abs/1601.05788'>Automatic Matching of Bullet Lands</a>.<br><hr><a href='http://www.erichare.net' target='_blank'><b>Eric Hare</b></a>, Department of Statistics, Iowa State University, Ames IA 50011-1210, United States.<br><b>Heike Hofmann</b>, Department of Statistics, Iowa State University, Ames IA 50011-1210, United States.<br><b>Alicia Carriquiry</b>, Department of Statistics, Iowa State University, Ames IA 50011-1210, United States."))
+                 div(id = "info", HTML("This app will walk through the steps used to programmatically determine the probability that two bullets were fired from the same gun barrel. We compare at the bullet land level.<br><br><b>To begin, choose or upload two .x3p files representing the two bullet lands you wish to compare.</b><br><br>We have provided three example files from the Hamby study which you may use - The two lands from Barrel 1 are a match, but Barrel 2 does not match either.<br><br>This work is part of the <a href='http://forensic.stat.iastate.edu'>Center for Statistics and Applications in Forensic Evidence</a> (CSAFE) at <a href='http://www.iastate.edu'>Iowa State University</a>. These procedures are fully open-source and transparent. The code producing the results is given on each page. For more details on the underlying code, please see the <a href='https://github.com/erichare/bulletr'>GitHub repository</a> for the companion R package <b>bulletr</b>, as well as our publication <a href='http://arxiv.org/abs/1601.05788'>Automatic Matching of Bullet Lands</a>.<br><hr><a href='http://www.erichare.net' target='_blank'><b>Eric Hare</b></a>, Department of Statistics, Iowa State University, Ames IA 50011-1210, United States.<br><b>Heike Hofmann</b>, Department of Statistics, Iowa State University, Ames IA 50011-1210, United States.<br><b>Alicia Carriquiry</b>, Department of Statistics, Iowa State University, Ames IA 50011-1210, United States."))
             ),
             conditionalPanel(condition = "input.stage0 && !input.stage1 || input.stage5",
                  h2("Stage 1: Finding a Stable Region"),

@@ -99,8 +99,8 @@ unfortify_x3p <- function(df) {
     my.info <- attr(df, "info")
     my.lst <- list(header.info = my.info, 
                    surface.matrix = matrix(df$value, 
-                                           nrow = length(unique(df$y)), 
-                                           ncol = length(unique(df$x)),
+                                           nrow = length(unique(df$x)), 
+                                           ncol = length(unique(df$y)),
                                            byrow = TRUE))
     
     return(my.lst)

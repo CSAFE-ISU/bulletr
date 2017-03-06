@@ -11,7 +11,7 @@ library(RMySQL)
 dbname <- "bullets"
 user <- "buser"
 password <- readLines("buser_pass.txt")
-host <- "10.25.122.176"
+host <- "50.81.214.252"
 
 options(shiny.maxRequestSize = 30*1024^2) 
 

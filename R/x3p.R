@@ -173,7 +173,13 @@ processBullets <- function(bullet, name = "", x = 100, grooves = NULL, span = 0.
         } else {
             br111.groove <- list(groove = grooves)
         }
-        fit_loess(br111, br111.groove, span = span)$resid$data
+        
+        myspan <- span
+        if (myspan > 1) {
+            ## Use the nist method
+            myspan <- myspan / diff(br111.groove$groove)
+        }
+        fit_loess(br111, br111.groove, span = myspan)$resid$data
     })
     lof <- list_of_fits %>% bind_rows
     

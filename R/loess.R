@@ -134,10 +134,12 @@ smoothloess <- function(x, y, span, sub = 2) {
 bulletSmooth <- function(data, span = 0.03, limits = c(-5,5)) {
     bullet <- NULL
     y <- NULL
-    
+    myspan <- NULL
+
     lof <- data %>% group_by(bullet) %>% mutate(
-        l30 = smoothloess(y, resid, span = span)
-    )
+        myspan = ifelse(span > 1, span / diff(range(y)), span),
+        l30 = smoothloess(y, resid, span = myspan)
+    ) %>% select(-myspan)
     lof$l30 <- pmin(max(limits), lof$l30)
     lof$l30 <- pmax(min(limits), lof$l30)
     lof

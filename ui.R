@@ -7,7 +7,7 @@ library(RMySQL)
 dbname <- "bullets"
 user <- "buser"
 password <- readLines("buser_pass.txt")
-host <- "50.81.214.252"
+host <- "127.0.0.1"
 
 con <- dbConnect(MySQL(), user = user, password = password,
                  dbname = dbname, host = host)

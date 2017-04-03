@@ -15,6 +15,29 @@ host <- "127.0.0.1"
 
 options(shiny.maxRequestSize = 30*1024^2) 
 
+###
+### File Name Back Transform
+###
+get_filename <- function(study, barrel, bullet, land) {
+  if (study == "Hamby44") {
+    return(file.path("images", "Hamby (2009) Barrel", "bullets", 
+                     paste0("br", barrel, "_", bullet, "_land", land, ".x3p")))
+  } else if (study == "Hamby252") {
+    if (barrel %in% LETTERS) {
+      return(file.path("images", "Hamby (2009) Barrel", "bullets", 
+                       paste0("Ukn Bullet ", barrel, "-", land, ".x3p")))
+    } else {
+      return(file.path("images", "Hamby (2009) Barrel", "bullets", 
+                       paste0("Br", barrel, " Bullet ", bullet, "-", land, ".x3p")))
+    }
+  } else if (study == "Cary") {
+    return(file.path("images", "Cary Persistence", "bullets", 
+                     paste0("CWBLT", str_pad(bullet, 4, pad = "0"), "-1.x3p")))
+  } else {
+    return("Not Found")
+  }
+}
+
 shinyServer(function(input, output, session) {
     
     bullet1 <- reactive({
@@ -26,19 +49,30 @@ shinyServer(function(input, output, session) {
             
             con <- dbConnect(MySQL(), user = user, password = password,
                              dbname = dbname, host = host)
-            
+
             bullet_metadata <- dbGetQuery(con, paste0("SELECT * FROM metadata WHERE land_id = ", input$choose1))
-            bullet_data <- dbGetQuery(con, paste0("SELECT x,y,value FROM data WHERE land_id = ", input$choose1)) %>%
-                arrange(y, x)
             
-            attr(bullet_data, "info") <- list(num_profiles = bullet_metadata$num_profiles,
-                                              num_obs_per_profile = bullet_metadata$num_obs_per_profile,
-                                              profile_inc = bullet_metadata$profile_inc,
-                                              obs_inc = bullet_metadata$obs_inc)
-    
+            cat(get_filename(bullet_metadata$study[1],
+                             bullet_metadata$barrel[1],
+                             bullet_metadata$bullet[1],
+                             bullet_metadata$land[1]))
+            
             dbDisconnect(con)
             
-            return(unfortify_x3p(bullet_data))
+            return(read_x3p(get_filename(bullet_metadata$study[1],
+                                         bullet_metadata$barrel[1],
+                                         bullet_metadata$bullet[1],
+                                         bullet_metadata$land[1])))
+            # bullet_data <- dbGetQuery(con, paste0("SELECT x,y,value FROM data WHERE land_id = ", input$choose1)) %>%
+            #     arrange(y, x)
+            # 
+            # attr(bullet_data, "info") <- list(num_profiles = bullet_metadata$num_profiles,
+            #                                   num_obs_per_profile = bullet_metadata$num_obs_per_profile,
+            #                                   profile_inc = bullet_metadata$profile_inc,
+            #                                   obs_inc = bullet_metadata$obs_inc)
+            # 
+            # 
+            # return(unfortify_x3p(bullet_data))
         })
     })
     
@@ -52,17 +86,23 @@ shinyServer(function(input, output, session) {
                              dbname = dbname, host = host)
             
             bullet_metadata <- dbGetQuery(con, paste0("SELECT * FROM metadata WHERE land_id = ", input$choose2))
-            bullet_data <- dbGetQuery(con, paste0("SELECT x,y,value FROM data WHERE land_id = ", input$choose2)) %>%
-                arrange(y, x)
             
-            attr(bullet_data, "info") <- list(num_profiles = bullet_metadata$num_profiles,
-                                              num_obs_per_profile = bullet_metadata$num_obs_per_profile,
-                                              profile_inc = bullet_metadata$profile_inc,
-                                              obs_inc = bullet_metadata$obs_inc)
+            return(read_x3p(get_filename(bullet_metadata$study[1],
+                                         bullet_metadata$barrel[1],
+                                         bullet_metadata$bullet[1],
+                                         bullet_metadata$land[1])))
             
-            dbDisconnect(con)
-            
-            return(unfortify_x3p(bullet_data))
+            # bullet_data <- dbGetQuery(con, paste0("SELECT x,y,value FROM data WHERE land_id = ", input$choose2)) %>%
+            #     arrange(y, x)
+            # 
+            # attr(bullet_data, "info") <- list(num_profiles = bullet_metadata$num_profiles,
+            #                                   num_obs_per_profile = bullet_metadata$num_obs_per_profile,
+            #                                   profile_inc = bullet_metadata$profile_inc,
+            #                                   obs_inc = bullet_metadata$obs_inc)
+            # 
+            # dbDisconnect(con)
+            # 
+            # return(unfortify_x3p(bullet_data))
         })
     })
     

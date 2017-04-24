@@ -154,19 +154,25 @@ sample_x3p <- function(dframe, byxy = c(2, 2)) {
 processBullets <- function(bullet, name = "", x = 100, grooves = NULL, span = 0.75, window = 0, ...) {
     y <- value <- NULL
     
-    crosscuts <- unique(fortify_x3p(bullet)$x)
-    crosscuts <- crosscuts[crosscuts >= min(x)]
-    crosscuts <- crosscuts[crosscuts <= max(x)]
+    if (!is.data.frame(bullet)) {
+      crosscuts <- unique(fortify_x3p(bullet)$x)
+      crosscuts <- crosscuts[crosscuts >= min(x)]
+      crosscuts <- crosscuts[crosscuts <= max(x)]
+    } else {
+      crosscuts <- x
+    }
+  
     if (length(x) > 2) crosscuts <- crosscuts[crosscuts %in% x]
     
     list_of_fits <- lapply(crosscuts, function(myx) {
+        if (!is.data.frame(bullet)) bullet <- fortify_x3p(bullet)
+        
         br111 <- bullet %>%
-            fortify_x3p %>%
             na.trim %>%
             filter(x >= myx - window, x <= myx + window) %>%
             group_by(y) %>%
             summarise(x = myx, value = mean(value, na.rm = TRUE)) %>%
-            select(x, y, value) %>%
+            dplyr::select(x, y, value) %>%
             as.data.frame
         if (is.null(grooves)) {
             br111.groove <- get_grooves(br111, ...)

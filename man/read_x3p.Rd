@@ -16,7 +16,7 @@ Read an x3p file as an R Data Frame
 }
 \examples{
 \dontrun{
-br411 <- read.x3p("Br4 Bullet 4-1.x3p")
+br411 <- read_x3p("Br4 Bullet 4-1.x3p")
 }
 
 }

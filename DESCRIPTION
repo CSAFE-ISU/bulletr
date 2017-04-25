@@ -1,14 +1,17 @@
 Package: bulletr
 Title: Algorithms for Matching Bullet Lands
-Maintainer: Eric Hare <erichare@iastate.edu>
-Author: Heike Hofmann, Eric Hare
+Authors@R: c(
+    person("Eric", "Hare", email = "erichare@iastate.edu", role = c("aut", "cre")),
+    person("Heike", "Hofmann", email = "hofmann@iastate.edu", role = "aut"))
 Version: 0.1
 License: GPL-3
-Date: 2016-10-31
+Date: 2017-04-25
 Description: Analyze bullet lands using nonparametric methods. We provide a 
     reading routine for x3p files and a host of analysis functions designed to
     assess the probability that two bullets were fired from the same gun
     barrel.
+URL: https://github.com/erichare/bulletr
+BugReports: https://github.com/erichare/bulletr/issues
 Imports:
     xml2,
     zoo,

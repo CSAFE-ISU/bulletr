@@ -6,10 +6,10 @@ Authors@R: c(
 Version: 0.1
 License: GPL-3
 Date: 2017-04-25
-Description: Analyze bullet lands using nonparametric methods. We provide a 
-    reading routine for x3p files and a host of analysis functions designed to
-    assess the probability that two bullets were fired from the same gun
-    barrel.
+Description: Analyze bullet lands using nonparametric methods. We provide a
+    reading routine for x3p files (see http://www.openfmc.org for more
+    information) and a host of analysis functions designed to assess the
+    probability that two bullets were fired from the same gun barrel.
 URL: https://github.com/erichare/bulletr
 BugReports: https://github.com/erichare/bulletr/issues
 Imports:

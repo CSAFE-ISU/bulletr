@@ -4,14 +4,17 @@ Analyze bullet striations using nonparametric methods
 ## HOW-TO
 
 1. Load Libraries
-
+    
+    ```
     library(dplyr)
     library(readr)
     library(bulletr)
     library(randomForest)
+    ```
   
 2. Read in the first bullet file data, and convert to the appropriate x3p format (if necessary):
 
+    ```
     h44_g1 <- read_delim("~/Downloads/H44-G-1.dat", 
                        delim = " ", 
                        col_names = c("y", "x", "value"))
@@ -36,3 +39,4 @@ Analyze bullet striations using nonparametric methods
     g1_mat <- matrix(h44_g1_clean$value, nrow = g1_num_obs_per_profile, ncol = g1_num_profiles, byrow = TRUE)
 
     h44_g1_x3p <- list(header.info = g1_header.info, surface.matrix = g1_mat)
+    ```

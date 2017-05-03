@@ -20,8 +20,56 @@ Analyze bullet striations using nonparametric methods
 2. Read in the bullet file data, and convert to the appropriate x3p format (if necessary):
 
     ```
-    h44_g1 <- read_dat("~/Downloads/H44-G-1.dat")
-    h44_gx1 <- read_dat("~/Downloads/H44-GX-1.dat")
+    h44_g1 <- read_delim("~/Downloads/H44-G-1.dat", 
+                     delim = " ", 
+                     col_names = c("y", "x", "value"))
+
+    h44_g1_clean <- h44_g1 %>% 
+      dplyr::select(x, y, value) %>% 
+      arrange(y, x) %>%
+      mutate(value = as.numeric(ifelse(value == "1.#QNAN0" | value == "-1.#IND00", NaN, value))) %>%
+      mutate(value = value - min(value, na.rm = TRUE))
+
+    g1_inc_x <- diff(unique(h44_g1_clean$x)[1:2])
+    g1_inc_y <- diff(unique(h44_g1_clean$y)[1:2])
+
+    g1_num_profiles <- length(unique(h44_g1_clean$x))
+    g1_num_obs_per_profile <- length(unique(h44_g1_clean$y))
+
+    g1_header.info <- list(num_profiles = g1_num_profiles,
+                        num_obs_per_profile = g1_num_obs_per_profile,
+                        profile_inc = g1_inc_x,
+                        obs_inc = g1_inc_y)
+
+    g1_mat <- matrix(h44_g1_clean$value, nrow = g1_num_obs_per_profile, ncol = g1_num_profiles, byrow = TRUE)
+
+    h44_g1_x3p <- list(header.info = g1_header.info, surface.matrix = g1_mat)
+    
+    
+    h44_gx1 <- read_delim("~/Downloads/H44-GX-1.dat", 
+                     delim = " ", 
+                     col_names = c("y", "x", "value"))
+
+    h44_gx1_clean <- h44_gx1 %>% 
+      dplyr::select(x, y, value) %>% 
+      arrange(y, x) %>%
+      mutate(value = as.numeric(ifelse(value == "1.#QNAN0" | value == "-1.#IND00", NaN, value))) %>%
+      mutate(value = value - min(value, na.rm = TRUE))
+
+    gx1_inc_x <- diff(unique(h44_gx1_clean$x)[1:2])
+    gx1_inc_y <- diff(unique(h44_gx1_clean$y)[1:2])
+
+    gx1_num_profiles <- length(unique(h44_gx1_clean$x))
+    gx1_num_obs_per_profile <- length(unique(h44_gx1_clean$y))
+
+    gx1_header.info <- list(num_profiles = gx1_num_profiles,
+                           num_obs_per_profile = gx1_num_obs_per_profile,
+                           profile_inc = gx1_inc_x,
+                           obs_inc = gx1_inc_y)
+
+    gx1_mat <- matrix(h44_gx1_clean$value, nrow = gx1_num_obs_per_profile, ncol = gx1_num_profiles, byrow = TRUE)
+
+    h44_gx1_x3p <- list(header.info = gx1_header.info, surface.matrix = gx1_mat)
     ```
 
 3. Get the ideal cross sections
@@ -90,8 +138,8 @@ Analyze bullet striations using nonparametric methods
     idx1 <- which(round(subLOFx1$y, digits = 3) %in% ys)
     idx2 <- which(round(subLOFx2$y, digits = 3) %in% ys)
 
-    distr.dist <- sqrt(mean(((subLOFx1$val[idx1] - subLOFx2$val[idx2]) * inc_x / 1000)^2, na.rm=TRUE))
-    distr.sd <- sd(subLOFx1$val * inc_x / 1000, na.rm=TRUE) + sd(subLOFx2$val * inc_x / 1000, na.rm=TRUE)
+    distr.dist <- sqrt(mean(((subLOFx1$val[idx1] - subLOFx2$val[idx2]) * g1_inc_x / 1000)^2, na.rm=TRUE))
+    distr.sd <- sd(subLOFx1$val * g1_inc_x / 1000, na.rm=TRUE) + sd(subLOFx2$val * g1_inc_x / 1000, na.rm=TRUE)
 
     km <- which(res$lines$match)
     knm <- which(!res$lines$match)
@@ -118,18 +166,18 @@ Analyze bullet striations using nonparametric methods
       D=distr.dist, 
       sd_D = distr.sd,
       b1=b12[1], b2=b12[2],
-      signature_length = signature.length * inc_x / 1000,
+      signature_length = signature.length * g1_inc_x / 1000,
       overlap = length(ys) / signature.length,
-      matches = sum(res$lines$match) * (1000 / inc_x) / length(ys),
+      matches = sum(res$lines$match) * (1000 / g1_inc_x) / length(ys),
       mismatches = sum(!res$lines$match) * 1000 / abs(diff(range(c(subLOFx1$y, subLOFx2$y)))),
-      cms = res$maxCMS * (1000 / inc_x) / length(ys),
-      cms2 = bulletr::maxCMS(subset(res$lines, type==1 | is.na(type))$match) * (1000 / inc_x) / length(ys),
+      cms = res$maxCMS * (1000 / g1_inc_x) / length(ys),
+      cms2 = bulletr::maxCMS(subset(res$lines, type==1 | is.na(type))$match) * (1000 / g1_inc_x) / length(ys),
       non_cms = bulletr::maxCMS(!res$lines$match) * 1000 / abs(diff(range(c(subLOFx1$y, subLOFx2$y)))),
-      left_cms = max(knm[1] - km[1], 0) * (1000 / inc_x) / length(ys),
-      right_cms = max(km[length(km)] - knm[length(knm)],0) * (1000 / inc_x) / length(ys),
+      left_cms = max(knm[1] - km[1], 0) * (1000 / g1_inc_x) / length(ys),
+      right_cms = max(km[length(km)] - knm[length(knm)],0) * (1000 / g1_inc_x) / length(ys),
       left_noncms = max(km[1] - knm[1], 0) * 1000 / abs(diff(range(c(subLOFx1$y, subLOFx2$y)))),
       right_noncms = max(knm[length(knm)]-km[length(km)],0) * 1000 / abs(diff(range(c(subLOFx1$y, subLOFx2$y)))),
-      sum_peaks = sum(abs(res$lines$heights[res$lines$match])) * (1000 / inc_x) / length(ys)
+      sum_peaks = sum(abs(res$lines$heights[res$lines$match])) * (1000 / g1_inc_x) / length(ys)
     )
 
     ccf <- t(as.data.frame(ccf_temp)) %>%

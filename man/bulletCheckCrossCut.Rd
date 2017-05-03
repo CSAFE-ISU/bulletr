@@ -23,3 +23,4 @@ bulletCheckCrossCut(path, bullet = NULL, distance = 25, xlimits = c(50,
 \description{
 Should be changed: x should just indicate lower and upper limit. That is cleaner and should speed things up as well.
 }
+

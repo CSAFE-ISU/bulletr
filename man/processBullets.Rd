@@ -34,3 +34,4 @@ is used (see \code{?loess} for details) to remove the big structure.
 data(br411)
 br411_processed <- processBullets(br411, name = "br411")
 }
+

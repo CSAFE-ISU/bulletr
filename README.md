@@ -1,6 +1,11 @@
 # bulletr
 Analyze bullet striations using nonparametric methods
 
+[![CRAN Status](http://www.r-pkg.org/badges/version/bulletr)](https://cran.r-project.org/package=bulletr) [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/bulletr)](http://www.r-pkg.org/pkg/bulletr) 
+
+<!--[![Travis-CI Build Status](https://travis-ci.org/haleyjeppson/ggmosaic.svg?branch=master)](https://travis-ci.org/haleyjeppson/ggmosaic)-->
+
+
 ## HOW-TO
 
 1. Load Libraries

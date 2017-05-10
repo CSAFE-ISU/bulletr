@@ -1,6 +1,6 @@
 #' Find the grooves of a bullet land
 #' 
-#' @param bullet data frame with topological data
+#' @param bullet data frame with topological data in x-y-z format
 #' @param smoothfactor The smoothing window to use
 #' @param adjust positive number to adjust the grooves
 #' @param groove_cutoff The index at which a groove cannot exist past

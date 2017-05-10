@@ -8,7 +8,7 @@ get_grooves(bullet, smoothfactor = 15, adjust = 10, groove_cutoff = 400,
   mean_left = NULL, mean_right = NULL, mean_window = 100)
 }
 \arguments{
-\item{bullet}{data frame with topological data}
+\item{bullet}{data frame with topological data in x-y-z format}
 
 \item{smoothfactor}{The smoothing window to use}
 

@@ -192,9 +192,4 @@ processBullets <- function(bullet, name = "", x = 100, grooves = NULL, span = 0.
     data.frame(lof, bullet = name, stringsAsFactors = FALSE)
 }
 
-#' 3d topological surface measurements for one land of a bullet from the Hamby study
-#' 
-#' Some more info - not sure at the moment which bullet this is. Describe structure.
-#' @format a list
-"br411"
 

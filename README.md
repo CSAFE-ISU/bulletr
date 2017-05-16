@@ -106,7 +106,7 @@ Analyze bullet striations using nonparametric methods
       group_by(y) %>%
       mutate(avgl30 = mean(l30, na.rm = TRUE)) %>%
       ungroup() %>%
-      mutate(smoothavgl30 = smoothloess(x = y, y = avgl30, span = compare_doublesmooth),
+      mutate(smoothavgl30 = smoothloess(x = y, y = avgl30, span = 0.3),
              l50 = l30 - smoothavgl30)
 
     final_doublesmoothed <- doublesmoothed %>%

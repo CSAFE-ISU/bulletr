@@ -40,6 +40,7 @@ get_lag_max_R <- function(b1, b2, window, b1.left) {
        plot = plot)
 }
 
+
 #' Get correlation between two signatures
 #' 
 #' @param b1 dataframe

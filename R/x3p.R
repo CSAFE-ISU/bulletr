@@ -61,6 +61,7 @@ read_x3p <- function(path, profiley = TRUE) {
                 surface.matrix = datamat))
 }
 
+
 #' Convert a list of x3p file into a data frame
 #' 
 #' x3p format consists of a list with header info and a 2d matrix of scan depths. 

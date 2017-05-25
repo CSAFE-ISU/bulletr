@@ -5,10 +5,12 @@
 \title{Read a dat file and create an x3p file}
 \format{list with header information and surface matrix}
 \usage{
-read_dat(path)
+read_dat(path, profiley = TRUE)
 }
 \arguments{
 \item{path}{The file path to the dat file}
+
+\item{profiley}{are profiles on y?}
 }
 \description{
 Read a dat file and create an x3p file
@@ -16,6 +18,7 @@ Read a dat file and create an x3p file
 \examples{
 \dontrun{
 d1 <- read_dat("Br4 Bullet 4-1.dat")
+d2 <- read_dat("L1.dat", profiley = FALSE)
 }
 
 }

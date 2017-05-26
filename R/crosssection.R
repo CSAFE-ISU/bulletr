@@ -9,7 +9,7 @@
 #' @param span The span for the loess smooth function
 #' @param percmissing maximum percent missing values on the crosscut to be picked
 #' @export
-bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(50, 500), minccf = 0.9, span = 0.03, percmissing = 50) {
+bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(50, 500), minccf = 0.9, span = 0.03, percent_missing = 50) {
     get_cc <- function(x, mybullet) {
       # get cross cut, and smooth it
         pickx <- mybullet$x[which.min(abs(x - unique(mybullet$x)))]
@@ -31,7 +31,7 @@ bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(
     x <- min(xlimits)
     first_cc <- get_cc(x, mybullet = dbr111)
     # the 0.5 should be a parameter - might be a problem with short sequences down the line
-    while(dim(first_cc)[1] < bullet$header.info$num_obs_per_profile*perc_missing/100) {
+    while(dim(first_cc)[1] < bullet$header.info$num_obs_per_profile*percent_missing/100) {
       x <- x + distance
       first_cc <- get_cc(x, mybullet = dbr111)
     }

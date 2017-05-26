@@ -5,7 +5,6 @@
 #' @param b2 dataframe
 #' @param window width of the window (in indices) to consider for matching
 #' @param b1.left left location of the matching window
-#' @export
 get_lag_max_R <- function(b1, b2, window, b1.left) {
   dplccf <- function(x, y, lag.max = 50) {
     x <- as.vector(unlist(x))
@@ -86,6 +85,7 @@ get_cor <- function(b1, b2, window, b1.left, lag) {
 #' @param b1.left left location of the matching window
 #' @param window width of the window (in indices) to consider for matching
 #' @param reps number of replicates to use in the evaluation
+#' @export
 #' @examples 
 #' data(br411)
 #' b1 <- get_crosscut(x = 250, bullet=br411)

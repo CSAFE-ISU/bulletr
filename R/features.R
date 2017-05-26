@@ -114,3 +114,65 @@ CMS <- function(match) {
     
     return(table(diff(z)))
 }
+
+#' Get a feature vector for a pair of lands
+#' 
+#' @param res list of two aligned lands resulting from bulletGetMaxCMS
+#' @export
+get_features <- function(res) {
+  lofX <- res$bullets
+  lofX$bullet <- lofX$src
+  b12 <- unique(lofX$bullet)
+  
+  subLOFx1 <- subset(lofX, bullet==b12[1])
+  subLOFx2 <- subset(lofX, bullet==b12[2]) 
+  
+  ys <- dplyr::intersect(round(subLOFx1$y, digits = 3), round(subLOFx2$y, digits = 3))
+  
+  idx1 <- which(round(subLOFx1$y, digits = 3) %in% ys)
+  idx2 <- which(round(subLOFx2$y, digits = 3) %in% ys)
+  
+  g1_inc_x <- 0.645
+  
+  distr.dist <- sqrt(mean(((subLOFx1$val[idx1] - subLOFx2$val[idx2]) * g1_inc_x / 1000)^2, na.rm=TRUE))
+  distr.sd <- sd(subLOFx1$val * g1_inc_x / 1000, na.rm=TRUE) + sd(subLOFx2$val * g1_inc_x / 1000, na.rm=TRUE)
+  
+  km <- which(res$lines$match)
+  knm <- which(!res$lines$match)
+  if (length(km) == 0) km <- c(length(knm)+1,0)
+  if (length(knm) == 0) knm <- c(length(km)+1,0)
+  
+  signature.length <- min(nrow(subLOFx1), nrow(subLOFx2))
+  
+  doublesmoothed <- lofX %>%
+    group_by(y) %>%
+    mutate(avgl30 = mean(l30, na.rm = TRUE)) %>%
+    ungroup() %>%
+    mutate(smoothavgl30 = smoothloess(x = y, y = avgl30, span = 0.3),
+           l50 = l30 - smoothavgl30)
+  
+  final_doublesmoothed <- doublesmoothed %>%
+    filter(round(y, digits = 3) %in% ys)
+  
+  rough_cor <- cor(na.omit(cbind(final_doublesmoothed$l50[final_doublesmoothed$bullet == b12[1]],
+                                 final_doublesmoothed$l50[final_doublesmoothed$bullet == b12[2]])),
+                   use = "pairwise.complete.obs")[1,2]
+  
+  data.frame(ccf=res$ccf, rough_cor = rough_cor, lag=res$lag / 1000, 
+             D=distr.dist, 
+             sd_D = distr.sd,
+             b1=b12[1], b2=b12[2],
+             signature_length = signature.length * g1_inc_x / 1000,
+             overlap = length(ys) / signature.length,
+             matches = sum(res$lines$match) * (1000 / g1_inc_x) / length(ys),
+             mismatches = sum(!res$lines$match) * 1000 / abs(diff(range(c(subLOFx1$y, subLOFx2$y)))),
+             cms = res$maxCMS * (1000 / g1_inc_x) / length(ys),
+             cms2 = bulletr::maxCMS(subset(res$lines, type==1 | is.na(type))$match) * (1000 / g1_inc_x) / length(ys),
+             non_cms = bulletr::maxCMS(!res$lines$match) * 1000 / abs(diff(range(c(subLOFx1$y, subLOFx2$y)))),
+             left_cms = max(knm[1] - km[1], 0) * (1000 / g1_inc_x) / length(ys),
+             right_cms = max(km[length(km)] - knm[length(knm)],0) * (1000 / g1_inc_x) / length(ys),
+             left_noncms = max(km[1] - knm[1], 0) * 1000 / abs(diff(range(c(subLOFx1$y, subLOFx2$y)))),
+             right_noncms = max(knm[length(knm)]-km[length(km)],0) * 1000 / abs(diff(range(c(subLOFx1$y, subLOFx2$y)))),
+             sum_peaks = sum(abs(res$lines$heights[res$lines$match])) * (1000 / g1_inc_x) / length(ys)
+  )
+}

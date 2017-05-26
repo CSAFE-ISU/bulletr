@@ -13,11 +13,11 @@ get_grooves(bullet, method = "rollapply", smoothfactor = 15, adjust = 10,
 
 \item{method}{method to use for identifying grooves. Defaults to "rollapply"}
 
-\item{smoothfactor}{The smoothing window to use}
+\item{smoothfactor}{The smoothing window to use - XXX the smoothing window seems to depend on the resolution at which the data has been collected.}
 
 \item{adjust}{positive number to adjust the grooves}
 
-\item{groove_cutoff}{The index at which a groove cannot exist past}
+\item{groove_cutoff}{The index at which a groove cannot exist past - XXX this parameter should be expressed in microns rather than as an index to be able to properly deal with different resolutions}
 
 \item{mean_left}{If provided, the location of the average left groove}
 

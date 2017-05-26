@@ -2,9 +2,9 @@
 #' 
 #' @param bullet data frame with topological data in x-y-z format
 #' @param method method to use for identifying grooves. Defaults to "rollapply"
-#' @param smoothfactor The smoothing window to use
+#' @param smoothfactor The smoothing window to use - XXX the smoothing window seems to depend on the resolution at which the data has been collected. 
 #' @param adjust positive number to adjust the grooves
-#' @param groove_cutoff The index at which a groove cannot exist past
+#' @param groove_cutoff The index at which a groove cannot exist past - XXX this parameter should be expressed in microns rather than as an index to be able to properly deal with different resolutions
 #' @param mean_left If provided, the location of the average left groove
 #' @param mean_right If provided, the location of the average right groove
 #' @param mean_window The window around the means to use
@@ -21,9 +21,29 @@ get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust 
         mean_right = mean_right, 
         mean_window = mean_window
       )
+    if (method == "middle") {
+      grooves <- get_grooves_middle(
+        bullet = bullet,
+        middle = 75
+      )
+    }
 
     return(grooves)
 }
+
+#' Use the center of a crosscut
+#' 
+#' @param bullet data frame with topological data in x-y-z format
+#' @param middle middle percent to use for the identification
+get_grooves_middle <- function(bullet, middle = 75) {
+  groove <- quantile(bullet$y, probs=c((100-middle)/200, (100+middle)/200))
+  plot <- bullet %>% ggplot(aes(x = y, y = value)) + geom_line(size = .5) + theme_bw() +
+    geom_vline(xintercept=groove[1], colour = "blue") +
+    geom_vline(xintercept=groove[2], colour = "blue") 
+
+  return(list(groove = groove, plot = plot))
+}
+
 
 #' Using rollapply to find grooves in a crosscut
 #' 

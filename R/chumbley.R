@@ -156,5 +156,6 @@ chumbley <- function(b1, b2, b1.left, window, reps = 3) {
   cor_random <- sapply(random_lags, function(lag) 
     cor(b1$resid[indices], b2$resid[indices+lag], use="pairwise.complete"))  
   #  get_cor(b1, b2, window = window, b1.left = lefts[align_by], lag = lag))
-  list(test=wilcox.test(cor_matched, cor_random, alternative="greater"), cor_matched, cor_random)
+  list(test=wilcox.test(cor_matched, cor_random, alternative="greater"), cor_matched, cor_random,
+       alignment = list(window = c(lefts[align_by], lefts[align_by]+ window), lag=match$lag, cor=match$cor))
 }

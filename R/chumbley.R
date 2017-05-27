@@ -57,7 +57,7 @@ get_cor <- function(b1, b2, window, b1.left, lag) {
   indices <- indices[idx]
   
   b1.resid <- b1$resid[indices]
-  b2.resid <- b2$resid[indices]
+  b2.resid <- b2$resid[indices+lag]
 
   b1$window <- FALSE
   b1$window[indices] <- TRUE
@@ -67,7 +67,7 @@ get_cor <- function(b1, b2, window, b1.left, lag) {
     geom_point(size = .5, data =b2, colour="black")  + 
     geom_point(aes(x=x,y=y), 
                size=0.5,
-               data=data.frame(x=b2$y[indices], y = b2.resid), 
+               data=data.frame(x=b2$y[indices+lag], y = b2.resid), 
                colour="red")
   
   data = data.frame(x = indices,
@@ -148,7 +148,6 @@ chumbley <- function(b1, b2, b1.left, window, reps = 3) {
   # matched correlations
   cor_matched <- sapply(lefts[-align_by], function(b1.left) 
     get_cor(b1, b2, window = window, b1.left = b1.left, lag = match$lag))
-
 
   # random correlations
   random_lags <- sample(1:(nx-window), size=reps, replace=FALSE) - lefts[align_by]

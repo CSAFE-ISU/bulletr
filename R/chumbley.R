@@ -4,7 +4,7 @@
 #' @param b1 dataframe
 #' @param b2 dataframe
 #' @param window width of the window (in indices) to consider for matching
-#' @param b1.left left location of the matching window
+#' @param b1.left left index of the matching window
 get_lag_max_R <- function(b1, b2, window, b1.left) {
   dplccf <- function(x, y, lag.max = 50) {
     x <- as.vector(unlist(x))
@@ -23,7 +23,7 @@ get_lag_max_R <- function(b1, b2, window, b1.left) {
   }
   
   # find the window of measurements around the b1.center
-  left.idx <- which.min(abs(b1$y-b1.left))
+  left.idx <- b1.left #which.min(abs(b1$y-b1.left))
   b1.resid <- b1$resid[seq(left.idx, min(nrow(b1), left.idx+window))]
   lag <- dplccf(b2$resid, b1.resid, lag.max = nrow(b2)-window)
   data <- data.frame(x=1:length(b1.resid), 
@@ -117,7 +117,7 @@ get_cor <- function(b1, b2, window, b1.left, lag) {
 #' get_cor(b1, b2, window = 100, b1.left = 1000, lag = 300)
 #' get_cor(b1, b2, window = 100, b1.left = 1200, lag = 500)
 #' 
-#' chumbley(b1, b3, window=150, reps=5)
+#' chumbley(b1, b2, window=150, reps=5)
 #' 
 #' match13 <- get_lag_max_R(b1, b3, window = 100, b1.left = 450)
 #' # matched correlations
@@ -134,8 +134,9 @@ chumbley <- function(b1, b2, b1.left, window, reps = 3) {
   # get reps+1 many non-overlapping intervals of length window in the first scan
   nx <-  nrow(b1)
   if (nx/window < reps+1) stop("Can't find enough non-overlapping intervals. Reduce window size or number of repetitions.")
-  parts <- round(seq.int(from = 1, to=nx-window, length.out=reps+1))
+  parts <- round(seq.int(from = 1, to=nx, length.out=reps+2))
   parts_diff <- diff(parts)
+  parts <- parts[-(reps+2)]
   
   lefts <- parts+sapply(parts_diff, function(x) sample(1:(x-window), 1))
   
@@ -146,15 +147,21 @@ chumbley <- function(b1, b2, b1.left, window, reps = 3) {
   match <- get_lag_max_R(b1, b2, window = window, b1.left = lefts[align_by])
 
   # matched correlations
-  cor_matched <- sapply(lefts[-align_by], function(b1.left) 
-    get_cor(b1, b2, window = window, b1.left = b1.left, lag = match$lag))
-
+  cor_matched <- sapply(lefts[-align_by], function(left) 
+    get_cor(b1, b2, window = window, b1.left = left, lag = match$lag))
+  addons <- lapply(lefts[-align_by], function(left) {
+    xs <-  1:window + left + match$lag
+    geom_point(aes(x=x, y=y), data=data.frame(x = xs, 
+                                              y=b2$resid[xs]), colour = "red", size = .2)
+  })
+  match$plot <- match$plot + addons
+  
   # random correlations
   random_lags <- sample(1:(nx-window), size=reps, replace=FALSE) - lefts[align_by]
   indices <- lefts[align_by] -1 + 1:window
   cor_random <- sapply(random_lags, function(lag) 
     cor(b1$resid[indices], b2$resid[indices+lag], use="pairwise.complete"))  
   #  get_cor(b1, b2, window = window, b1.left = lefts[align_by], lag = lag))
-  list(test=wilcox.test(cor_matched, cor_random, alternative="greater"), cor_matched, cor_random,
-       alignment = list(window = c(lefts[align_by], lefts[align_by]+ window), lag=match$lag, cor=match$cor, plot=match$plot))
+  list(alignment = list(window = c(lefts[align_by], lefts[align_by]+ window), lag=match$lag, cor=match$cor, plot=match$plot),
+       test=wilcox.test(cor_matched, cor_random, alternative="greater"), cor_matched, cor_random)
 }

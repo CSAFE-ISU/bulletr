@@ -117,9 +117,7 @@ get_cor <- function(b1, b2, window, b1.left, lag) {
 #' get_cor(b1, b2, window = 100, b1.left = 1000, lag = 300)
 #' get_cor(b1, b2, window = 100, b1.left = 1200, lag = 500)
 #' 
-#' set.seed(seed)
 #' chumbley(b1, b3, window=150, reps=5)
-#' seed <- .Random.seed
 #' 
 #' match13 <- get_lag_max_R(b1, b3, window = 100, b1.left = 450)
 #' # matched correlations
@@ -158,5 +156,5 @@ chumbley <- function(b1, b2, b1.left, window, reps = 3) {
   cor_random <- sapply(random_lags, function(lag) 
     cor(b1$resid[indices], b2$resid[indices+lag], use="pairwise.complete"))  
   #  get_cor(b1, b2, window = window, b1.left = lefts[align_by], lag = lag))
-  list(test=wilcox.test(cor_matched, cor_random), cor_matched, cor_random)
+  list(test=wilcox.test(cor_matched, cor_random, alternative="greater"), cor_matched, cor_random)
 }

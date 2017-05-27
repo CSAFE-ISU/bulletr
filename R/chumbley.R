@@ -136,12 +136,12 @@ chumbley <- function(b1, b2, b1.left, window, reps = 3) {
   # get reps+1 many non-overlapping intervals of length window in the first scan
   nx <-  nrow(b1)
   if (nx/window < reps+1) stop("Can't find enough non-overlapping intervals. Reduce window size or number of repetitions.")
-  parts <- round(seq.int(from = 1, to=nx, length.out=reps+2))
+  parts <- round(seq.int(from = 1, to=nx-window, length.out=reps+1))
   parts_diff <- diff(parts)
   
-  lefts <- parts[-(reps+2)]+sapply(parts_diff, function(x) sample(1:(x-window), 1))
+  lefts <- parts+sapply(parts_diff, function(x) sample(1:(x-window), 1))
   
-  # identify one of the intervaks as the special one
+  # identify one of the intervals as the special one
   align_by <- sample(reps+1, 1)
   
   # find the best match

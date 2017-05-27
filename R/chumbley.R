@@ -1,9 +1,11 @@
 #' Get R Statistic for Chumbley matching
 #' 
-#' See Chumbley et al (2010)
+#' See Chumbley et al (2010).
+#' A small piece (b2) is matched to a much larger piece (b1). The lag gives the index location of the best match of b2 in b1.
 #' @param b1 dataframe
 #' @param b2 dataframe
 #' @param window width of the window (in indices) to consider for matching
+#' @return list of lag and correlation achieved. The plot shows b2 on b1.
 #' @param b1.left left index of the matching window
 get_lag_max_R <- function(b1, b2, window, b1.left) {
   dplccf <- function(x, y, lag.max = 50) {
@@ -29,10 +31,19 @@ get_lag_max_R <- function(b1, b2, window, b1.left) {
   data <- data.frame(x=1:length(b1.resid), 
                      y1=b1.resid, 
                      y2=b2$resid[lag$lag-1+1:length(b1.resid)])
-  plot <- b2 %>% ggplot(aes(y=resid)) + 
+
+  b1$idx <- 1:nrow(b1)
+  b2$idx <- 1:nrow(b2)
+  plot <- b1 %>% ggplot(aes(x = idx, y = resid)) +
     geom_vline(xintercept=left.idx, colour="grey50") +
-    geom_point(aes(x=1:nrow(b2)), size=.5, colour="steelblue") +
-    geom_point(aes(x=x, y=y), data=data.frame(x = 1:length(b1.resid)+lag$lag, y=b1.resid), size=.5, colour="orange") 
+    geom_point(size=.5, colour="steelblue") +
+    geom_point(aes(x = idx-lag$lag+left.idx), data=b2 %>% filter(between(idx, left.idx, left.idx+window)), 
+               size=.5, colour="orange", alpha=0.5)
+  
+#  plot <- b2 %>% ggplot(aes(y=resid)) + 
+#    geom_vline(xintercept=left.idx, colour="grey50") +
+#    geom_point(aes(x=1:nrow(b2)), size=.5, colour="steelblue") +
+#    geom_point(aes(x=x, y=y), data=data.frame(x = 1:length(b1.resid)+lag$lag, y=b1.resid), size=.5, colour="orange") 
     
   list(lag = lag$lag-left.idx, 
        cor = lag$ccf,
@@ -150,9 +161,10 @@ chumbley <- function(b1, b2, b1.left, window, reps = 3) {
   cor_matched <- sapply(lefts[-align_by], function(left) 
     get_cor(b1, b2, window = window, b1.left = left, lag = match$lag))
   addons <- lapply(lefts[-align_by], function(left) {
-    xs <-  1:window + left + match$lag
-    geom_point(aes(x=x, y=y), data=data.frame(x = xs, 
-                                              y=b2$resid[xs]), colour = "red", size = .2)
+    xs <-  1:window + left 
+    geom_point(aes(x=x, y=y), 
+               data=data.frame(x = xs-match$lag, 
+                               y=b2$resid[xs]), colour = "red", size = .2)
   })
   match$plot <- match$plot + addons
   

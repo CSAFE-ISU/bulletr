@@ -52,8 +52,12 @@ get_cor <- function(b1, b2, window, b1.left, lag) {
   # find the window of measurements around the b1.center
   left.idx <- which.min(abs(b1$y-b1.left))
   indices <- seq(left.idx, min(nrow(b1), left.idx+window))
+  idx <- which((indices + lag > 0) & (indices + lag <= nrow(b1)))
+  if (length(idx) == 0) return(NA)
+  indices <- indices[idx]
+  
   b1.resid <- b1$resid[indices]
-  b2.resid <- b2$resid[indices + lag]
+  b2.resid <- b2$resid[indices]
 
   b1$window <- FALSE
   b1$window[indices] <- TRUE
@@ -90,7 +94,7 @@ get_cor <- function(b1, b2, window, b1.left, lag) {
 #' data(br411)
 #' b1 <- get_crosscut(x = 250, bullet=br411)
 #' b2 <- get_crosscut(x = 150, bullet = br411)
-#' b3 <- get_crosscut(x = 25, bullet=br411)
+#' b3 <- get_crosscut(x = 10, bullet=br411)
 #' b1.gr <- b1 %>% get_grooves(smoothfactor=30)
 #' b2.gr <- b2 %>% get_grooves()
 #' b3.gr <- b3 %>% get_grooves()
@@ -113,7 +117,9 @@ get_cor <- function(b1, b2, window, b1.left, lag) {
 #' get_cor(b1, b2, window = 100, b1.left = 1000, lag = 300)
 #' get_cor(b1, b2, window = 100, b1.left = 1200, lag = 500)
 #' 
-#' chumbley(b1, b2, window=150, reps=5)
+#' set.seed(seed)
+#' chumbley(b1, b3, window=150, reps=5)
+#' seed <- .Random.seed
 #' 
 #' match13 <- get_lag_max_R(b1, b3, window = 100, b1.left = 450)
 #' # matched correlations

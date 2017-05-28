@@ -56,12 +56,12 @@ get_lag_max_R <- function(b1, b2, window, b1.left) {
 #' @param b1 dataframe
 #' @param b2 dataframe
 #' @param window width of the window (in indices) to consider for matching
-#' @param b1.left left location of the matching window
+#' @param b1.left left index location of the matching window
 #' @param lag integer lag for the second window
 #' @export
 get_cor <- function(b1, b2, window, b1.left, lag) {
   # find the window of measurements around the b1.center
-  left.idx <- which.min(abs(b1$y-b1.left))
+  left.idx <- b1.left #which.min(abs(b1$y-b1.left))
   indices <- seq(left.idx, min(nrow(b1), left.idx+window))
   idx <- which((indices + lag > 0) & (indices + lag <= nrow(b1)))
   if (length(idx) == 0) return(NA)

@@ -13,9 +13,13 @@ get_lag_max_R(b1, b2, window, b1.left)
 
 \item{window}{width of the window (in indices) to consider for matching}
 
-\item{b1.left}{left location of the matching window}
+\item{b1.left}{left index of the matching window}
+}
+\value{
+list of lag and correlation achieved. The plot shows b2 on b1.
 }
 \description{
-See Chumbley et al (2010)
+See Chumbley et al (2010).
+A small piece (b2) is matched to a much larger piece (b1). The lag gives the index location of the best match of b2 in b1.
 }
 

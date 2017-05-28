@@ -13,7 +13,7 @@ get_cor(b1, b2, window, b1.left, lag)
 
 \item{window}{width of the window (in indices) to consider for matching}
 
-\item{b1.left}{left location of the matching window}
+\item{b1.left}{left index location of the matching window}
 
 \item{lag}{integer lag for the second window}
 }

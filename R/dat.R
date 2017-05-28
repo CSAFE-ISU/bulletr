@@ -2,6 +2,7 @@
 #' 
 #' @param path The file path to the dat file
 #' @param profiley are profiles on y?
+#' @param sample 1 in sample lines will be taken 
 #' @format list with header information and surface matrix
 #' @export
 #' @importFrom readr read_delim
@@ -11,7 +12,7 @@
 #' d2 <- read_dat("L1.dat", profiley = FALSE)
 #' }
 #'
-read_dat <- function(path, profiley = TRUE) {
+read_dat <- function(path, profiley = TRUE, sample = 1) {
   g1 <- read_delim(path, 
                        delim = " ", 
                        col_names = c("y", "x", "value"))
@@ -24,8 +25,20 @@ read_dat <- function(path, profiley = TRUE) {
     dplyr::select(x, y, value) %>% 
     arrange(y, x) %>%
     mutate(value = as.numeric(ifelse(value == "1.#QNAN0" | value == "-1.#IND00", NaN, value))) %>%
-    mutate(value = value - min(value, na.rm = TRUE))
+    mutate(value = value - min(value, na.rm = TRUE)) 
   
+  xs <- sort(unique(g1_clean$x))
+  ys <- sort(unique(g1_clean$y))
+  # downsample if necessary
+  if (sample > 1) {
+    idx <- (1:length(xs)) %% sample == 0
+    xs <- xs[idx]
+    idx <- (1:length(ys)) %% sample == 0
+    ys <- ys[idx]
+    
+    g1_clean <- g1_clean %>% filter(x %in% xs, y %in% ys) 
+  }
+   
   g1_inc_x <- diff(unique(g1_clean$x)[1:2])
   g1_inc_y <- diff(unique(g1_clean$y)[1:2])
   

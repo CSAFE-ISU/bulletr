@@ -125,8 +125,8 @@ get_cor <- function(b1, b2, window, b1.left, lag) {
 #' get_cor(b1, b2, window = 100, b1.left = 1200, lag = match$lag)
 #' # random correlations
 #' get_cor(b1, b2, window = 100, b1.left = 800, lag = 100)
-#' get_cor(b1, b2, window = 100, b1.left = 1000, lag = 300)
-#' get_cor(b1, b2, window = 100, b1.left = 1200, lag = 500)
+#' get_cor(b1, b2, window = 100, b1.left = 1000, lag = -300)
+#' get_cor(b1, b2, window = 100, b1.left = 1200, lag = -500)
 #' 
 #' chumbley(b1, b2, window=150, reps=5)
 #' 

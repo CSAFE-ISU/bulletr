@@ -181,6 +181,7 @@ get_cor <- function(b1, b2, window, b1.left, lag) {
 #' 
 #' chumbley(b1, b3, window=100, reps=5)
 chumbley <- function(b1, b2, window, reps = 3) {
+  .Deprecated("get_chumbley")
   # get reps+1 many non-overlapping intervals of length window in the first scan
   nx <-  nrow(b1)
   if (nx/window < reps+1) stop("Can't find enough non-overlapping intervals. Reduce window size or number of repetitions.")
@@ -275,13 +276,14 @@ get_chumbley <- function(y1, y2, window, reps = 3) {
       
   })
   match$plot <- match$plot + addons
-  
+
   # random correlations
-  random_lags <- sample(1:(n1-window), size=reps, replace=FALSE) - lefts[align_by]
-  indices <- lefts[align_by] -1 + 1:window
-  cor_random <- sapply(random_lags, function(lag) {
-    if (lag > 0) yy3 <- lag(y2, lag) else yy3 <- lead(y2, -lag)
-    cor(y1[indices], yy3[indices], use="pairwise.complete")
+  random_lefts <- sample(1:(length(y2)-window), size=reps, replace=FALSE)
+  indices <- 1:window 
+  yy1 <- lead(y1, lefts[align_by])
+  cor_random <- sapply(random_lefts, function(lag) {
+    yy3 <- lead(y2, lag)
+    cor(yy1[indices], yy3[indices], use="pairwise.complete")
   })
   #  get_cor(b1, b2, window = window, b1.left = lefts[align_by], lag = lag))
   list(alignment = list(window = c(lefts[align_by], lefts[align_by]+ window), 

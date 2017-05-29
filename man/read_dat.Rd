@@ -5,12 +5,14 @@
 \title{Read a dat file and create an x3p file}
 \format{list with header information and surface matrix}
 \usage{
-read_dat(path, profiley = TRUE)
+read_dat(path, profiley = TRUE, sample = 1)
 }
 \arguments{
 \item{path}{The file path to the dat file}
 
 \item{profiley}{are profiles on y?}
+
+\item{sample}{1 in sample lines will be taken}
 }
 \description{
 Read a dat file and create an x3p file

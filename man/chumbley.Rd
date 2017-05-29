@@ -4,14 +4,12 @@
 \alias{chumbley}
 \title{Chumbley test score}
 \usage{
-chumbley(b1, b2, b1.left, window, reps = 3)
+chumbley(b1, b2, window, reps = 3)
 }
 \arguments{
 \item{b1}{dataframe}
 
 \item{b2}{dataframe}
-
-\item{b1.left}{left location of the matching window}
 
 \item{window}{width of the window (in indices) to consider for matching}
 
@@ -35,17 +33,14 @@ b2.gr$plot
 b1 <- fit_loess(b1, b1.gr)$data
 b2 <- fit_loess(b2, b2.gr)$data
 b3 <- fit_loess(b3, b3.gr)$data
-get_lag_max_R(b1, b2, window = 200, b1.left = 1000)
-get_lag_max_R(b1, b2, window = 100, b1.left = 800)
-match <- get_lag_max_R(b1, b2, window = 100, b1.left = 450)
 # matched correlations
 get_cor(b1, b2, window = 100, b1.left = 800, lag = match$lag)
 get_cor(b1, b2, window = 100, b1.left = 1000, lag = match$lag)
 get_cor(b1, b2, window = 100, b1.left = 1200, lag = match$lag)
 # random correlations
 get_cor(b1, b2, window = 100, b1.left = 800, lag = 100)
-get_cor(b1, b2, window = 100, b1.left = 1000, lag = 300)
-get_cor(b1, b2, window = 100, b1.left = 1200, lag = 500)
+get_cor(b1, b2, window = 100, b1.left = 1000, lag = -300)
+get_cor(b1, b2, window = 100, b1.left = 1200, lag = -500)
 
 chumbley(b1, b2, window=150, reps=5)
 

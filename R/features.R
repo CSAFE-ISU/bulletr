@@ -1,3 +1,22 @@
+#' Compute the Euclidean distance between toolmarks
+#' 
+#' Compute the Euclidean distance between two toolmark patterns. 
+#' @param y1 vector of equi-distant toolmark values
+#' @param y2 vector of equi-distant toolmark values
+#' @param normalize should the result be normalized to 1000 microns (1 millimeter)? Defaults to TRUE.
+#' @param resolution microns per pixel. Only used for normalization. 
+#' @export
+get_D <- function(y1, y2, normalize=TRUE, resolution = 0.645) {
+  distr.dist <- sqrt(mean((y1 - y2)^2, na.rm=TRUE))
+  distr.sd <- sd(y1, na.rm=TRUE) + sd(y2, na.rm=TRUE)
+  
+  if (normalize) {
+    distr.dist <- distr.dist *  resolution / 1000
+    distr.sd <- distr.sd * resolution/1000
+  }
+  c(D = distr.dist, sd_D = distr.sd)
+}
+
 #' Identify the number of maximum CMS between two bullet lands
 #' 
 #' @param lof1 dataframe of smoothed first signature

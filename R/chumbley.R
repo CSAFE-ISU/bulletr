@@ -243,7 +243,7 @@ chumbley <- function(b1, b2, window, reps = 3) {
 #' b2 <- fit_loess(b2, b2.gr)$data
 #' b3 <- fit_loess(b3, b3.gr)$data
 #' get_chumbley(b1$resid, b2$resid, window=150, reps=5)
-#' get_chumbley(b1$resid, b3$resid, window=100, reps=5)
+#' get_chumbley(b1$resid, b3$resid, window=250, reps=3)
 get_chumbley <- function(y1, y2, window, reps = 3) {
   # get reps+1 many non-overlapping intervals of length window in the first scan
   n1 <-  length(y1)

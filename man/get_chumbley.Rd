@@ -34,7 +34,7 @@ b1 <- fit_loess(b1, b1.gr)$data
 b2 <- fit_loess(b2, b2.gr)$data
 b3 <- fit_loess(b3, b3.gr)$data
 get_chumbley(b1$resid, b2$resid, window=150, reps=5)
-get_chumbley(b1$resid, b3$resid, window=100, reps=5)
+get_chumbley(b1$resid, b3$resid, window=250, reps=3)
 }
 \references{
 Chumbley, L. S., Morris, M. D., Kreiser, M. J., Fisher, C., Craft, J., Genalo, L. J., Davis, S., Faden, D. and Kidd, J. (2010), Validation of Tool Mark Comparisons Obtained Using a Quantitative, Comparative, Statistical Algorithm. Journal of Forensic Sciences, 55: 953–961. \url{doi:10.1111/j.1556-4029.2010.01424.x}

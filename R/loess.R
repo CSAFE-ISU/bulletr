@@ -128,15 +128,16 @@ smoothloess <- function(x, y, span, sub = 2) {
 #' @param data data frame as returned by the function \code{processBullets}
 #' @param span width of the smoother, defaults to 0.03
 #' @param limits vector of the form c(min, max). Results will be limited to be between these values.
+#' @param id variable name of the land identifier
 #' @return data frame of the same form as the input extended by the vector l30 for the smooth.
 #' @importFrom dplyr mutate
 #' @export
-bulletSmooth <- function(data, span = 0.03, limits = c(-5,5)) {
+bulletSmooth <- function(data, span = 0.03, limits = c(-5,5), id="bullet") {
     bullet <- NULL
     y <- NULL
     myspan <- NULL
 
-    lof <- data %>% group_by(bullet) %>% mutate(
+    lof <- data %>% group_by_(id) %>% mutate(
         myspan = ifelse(span > 1, span / diff(range(y)), span),
         l30 = smoothloess(y, resid, span = myspan[1])
     ) %>% select(-myspan)

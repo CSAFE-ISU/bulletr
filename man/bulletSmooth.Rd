@@ -4,7 +4,7 @@
 \alias{bulletSmooth}
 \title{Smooth the surface of a bullet}
 \usage{
-bulletSmooth(data, span = 0.03, limits = c(-5, 5))
+bulletSmooth(data, span = 0.03, limits = c(-5, 5), id = "bullet")
 }
 \arguments{
 \item{data}{data frame as returned by the function \code{processBullets}}
@@ -12,6 +12,8 @@ bulletSmooth(data, span = 0.03, limits = c(-5, 5))
 \item{span}{width of the smoother, defaults to 0.03}
 
 \item{limits}{vector of the form c(min, max). Results will be limited to be between these values.}
+
+\item{id}{variable name of the land identifier}
 }
 \value{
 data frame of the same form as the input extended by the vector l30 for the smooth.

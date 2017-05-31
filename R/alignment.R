@@ -1,9 +1,53 @@
+#' Align two surface cross cuts using maximal correlation
+#' 
+#' The bullet with the first name serves as a reference, the second bullet is shifted.
+#' @param y1 vector of striation marks (assuming equidistance between values)
+#' @param y2 vector of striation marks
+#' @return list consisting of a) the maximal cross correlation, b) the lag resulting in the highest cross correlation, 
+#' and c) a vector of length y1 with aligned values of y2.
+#' @export
+#' @importFrom stats cor
+do_align <- function (y1, y2)  {
+  dplccf <- function(x, y, lag.max = 50) {
+    x <- as.vector(unlist(x))
+    y <- as.vector(unlist(y))
+    # assume x is the long vector, y is the short vector:
+    nx <- length(x)
+    ny <- length(y)
+    if (nx >= ny) {
+    
+    y <- c(y, rep(NA, nx-ny))
+    
+    cors <- sapply(1:lag.max, function(lag) {
+      cor(x, lag(y,lag), use="pairwise.complete")
+    }) 
+    return(list(lag = which.max(cors), ccf = max(cors)))
+    } else {
+      res <- dplccf(y, x, lag.max=lag.max)
+      return(list(lag = -res$lag, ccf = res$ccf))
+    }
+  }
+
+  n1 <- length(y1)
+  n2 <- length(y2)
+  
+  lag <- dplccf(y1, y2, lag.max = 0.9*max(n1,n2))
+  
+  if (lag$lag > 0) y2 <- lag(y2, lag$lag)
+  if (lag$lag < 0) y2 <- lead(y2, -lag$lag)
+  
+  # ggplot(data, aes(x = y, y = l30, colour = factor(bullet))) + geom_line()
+  # ggplot(bullets, aes(x = y, y = l30, colour = factor(bullet))) + geom_line()
+  
+  list(ccf = lag$ccf, lag = lag$lag, y2 = y2[1:n1])
+}
+
 #' Align two surface cross cuts according to maximal correlation
 #' 
 #' The bullet with the first name serves as a reference, the second bullet is shifted.
 #' @param data data frame consisting of at least two surface crosscuts as given by function \code{bulletSmooth}.
 #' @param value string of the variable to match. Defaults to l30, the variable returned from function \code{bulletSmooth}.
-#' @return list consisting of a) the maximal cross correlation, b) the lag resulting in the highest cross correlation, and c) same data frame as input, but y vectors are aligned for maximal correlation between the 
+#' @return list consisting of a) the maximal cross correlation, b) the lag resulting in the highest cross correlation, and c) same data frame as input, but y vectors are aligned for maximal correlation
 #' @export
 #' @importFrom stats na.omit
 #' @importFrom stats cor

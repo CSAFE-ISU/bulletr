@@ -12,7 +12,7 @@ bulletAlign(data, value = "l30")
 \item{value}{string of the variable to match. Defaults to l30, the variable returned from function \code{bulletSmooth}.}
 }
 \value{
-list consisting of a) the maximal cross correlation, b) the lag resulting in the highest cross correlation, and c) same data frame as input, but y vectors are aligned for maximal correlation between the
+list consisting of a) the maximal cross correlation, b) the lag resulting in the highest cross correlation, and c) same data frame as input, but y vectors are aligned for maximal correlation
 }
 \description{
 The bullet with the first name serves as a reference, the second bullet is shifted.

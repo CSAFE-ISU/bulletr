@@ -2,7 +2,7 @@
 % Please edit documentation in R/alignment.R
 \name{do_align}
 \alias{do_align}
-\title{Align two surface cross cuts using maximal correlation}
+\title{Align two surface cross cuts using cross correlation}
 \usage{
 do_align(y1, y2)
 }
@@ -16,6 +16,6 @@ list consisting of a) the maximal cross correlation, b) the lag resulting in the
 and c) a vector of length y1 with aligned values of y2.
 }
 \description{
-The bullet with the first name serves as a reference, the second bullet is shifted.
+The first vector serves as a reference, the second vector is shifted, such that it aligns best with the first and has the same length as the first vector.
 }
 

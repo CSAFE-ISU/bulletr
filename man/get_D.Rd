@@ -16,6 +16,6 @@ get_D(y1, y2, normalize = TRUE, resolution = 0.645)
 \item{resolution}{microns per pixel. Only used for normalization.}
 }
 \description{
-Compute the Euclidean distance between two toolmark patterns.
+Compute the Euclidean distance between two toolmark patterns. The striation patterns are not aligned before the distance is calculated.
 }
 

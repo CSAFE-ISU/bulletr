@@ -1,6 +1,6 @@
 #' Compute the Euclidean distance between toolmarks
 #' 
-#' Compute the Euclidean distance between two toolmark patterns. 
+#' Compute the Euclidean distance between two toolmark patterns. The striation patterns are not aligned before the distance is calculated.
 #' @param y1 vector of equi-distant toolmark values
 #' @param y2 vector of equi-distant toolmark values
 #' @param normalize should the result be normalized to 1000 microns (1 millimeter)? Defaults to TRUE.
@@ -14,8 +14,31 @@ get_D <- function(y1, y2, normalize=TRUE, resolution = 0.645) {
     distr.dist <- distr.dist *  resolution / 1000
     distr.sd <- distr.sd * resolution/1000
   }
-  c(D = distr.dist, sd_D = distr.sd)
+  list(D = distr.dist, sd_D = distr.sd)
 }
+
+
+#' Compute the Hausdorff distance between toolmarks
+#' 
+#' Compute the Housdorff distance between two toolmark patterns. 
+#' The striation patterns are not aligned before the distance is calculated.
+#' The Hausdorff distance is defined as the maximum among the shortest distances between two curves. 
+#' Here, we allow to trim the largest distances to make the distance more robust
+#' @param y1 vector of equi-distant toolmark values
+#' @param y2 vector of equi-distant toolmark values
+#' @param trim percentage of largest distances to be trimmed.
+#' @export
+get_H <- function(y1, y2, trim = 0) {
+  distr.dist <- abs(y1 - y2)
+
+  H <- quantile(distr.dist, prob=1-trim/100, na.rm=TRUE)
+  names(H) <- "H"
+  
+  H
+}
+
+
+
 
 #' Identify the number of maximum CMS between two bullet lands
 #' 

@@ -1,37 +1,80 @@
+#' Cross correlation function between two vectors
+#' 
+#' 
+#' @param x vector 
+#' @param y vector 
+#' @param min.overlap integer value: what is the minimal number of values between x and y that should be considered?
+#' @return list with ccf values and lags
+#' @examples 
+#' x <- runif(20)
+#' my_ccf(x, lead(x, 5))
+#' my_ccf(x, lag(x, 5), min.overlap=3)
+#' x <- runif(100)
+#' bulletr:::my_ccf(x[45:50], x, min.overlap=6)
+my_ccf <-  function(x, y, min.overlap = 0.1*max(length(x),length(y))) {
+  x <- as.vector(unlist(x))
+  y <- as.vector(unlist(y))
+  # assume x is the long vector, y is the short vector:
+  nx <- length(x)
+  ny <- length(y)
+  
+  xx <- c(rep(NA, ny-min.overlap), x, rep(NA, ny-min.overlap))
+  yy <- c(y, rep(NA, length(xx)-ny))
+  
+  lag.max <- length(yy) - length(y)
+  lags <- 0:lag.max
+  
+  cors <- sapply(lags, function(lag) {
+    cor(xx, lag(yy,lag), use="pairwise.complete")
+  }) 
+  ns <- sapply(lags, function(lag) {
+    dim(na.omit(cbind(xx, lag(yy,lag))))[1]
+  }) 
+  cors[ns < min.overlap] <- NA
+  return(list(lag = lags-(ny-min.overlap), ccf = cors))
+}
+
 #' Align two surface cross cuts using cross correlation
 #' 
 #' The first vector serves as a reference, the second vector is shifted, such that it aligns best with the first and has the same length as the first vector.
 #' @param y1 vector of striation marks (assuming equidistance between values)
 #' @param y2 vector of striation marks
+#' @param min.overlap integer value: what is the minimal number of values between y1 and y2 that should be considered?
 #' @return list consisting of a) the maximal cross correlation, b) the lag resulting in the highest cross correlation, 
 #' and c) a vector of length y1 with aligned values of y2.
 #' @export
 #' @importFrom stats cor
-do_align <- function (y1, y2)  {
-  dplccf <- function(x, y, lag.max = 50) {
-    x <- as.vector(unlist(x))
-    y <- as.vector(unlist(y))
-    # assume x is the long vector, y is the short vector:
-    nx <- length(x)
-    ny <- length(y)
-    if (nx >= ny) {
-    
-    y <- c(y, rep(NA, nx-ny))
-    
-    cors <- sapply(1:lag.max, function(lag) {
-      cor(x, lag(y,lag), use="pairwise.complete")
-    }) 
-    return(list(lag = which.max(cors), ccf = max(cors)))
-    } else {
-      res <- dplccf(y, x, lag.max=lag.max)
-      return(list(lag = -res$lag, ccf = res$ccf))
-    }
-  }
-
-  n1 <- length(y1)
-  n2 <- length(y2)
+#' @examples 
+#' x <- runif(20)
+#' do_align(x, lead(x, 5))
+#' do_align(x, lag(x, 5), min.overlap=2)
+#' do_align(x, lag(x, 5), min.overlap=3)
+#' do_align(x, x[-(1:5)], min.overlap=3)
+#' do_align(x[-(1:5)], x, min.overlap=3)
+do_align <- function (y1, y2, min.overlap = 0.1*max(length(y1),length(y2)))  {
+  # dplccf <- function(x, y, min.overlap) {
+  #   x <- as.vector(unlist(x))
+  #   y <- as.vector(unlist(y))
+  #   # assume x is the long vector, y is the short vector:
+  #   nx <- length(x)
+  #   ny <- length(y)
+  #   if (nx >= ny) {
+  #     y <- c(y, rep(NA, nx-ny))
+  #     lags <- 0:lag.max
+  #     
+  #     cors <- sapply(lags, function(lag) {
+  #       cor(x, lag(y,lag), use="pairwise.complete")
+  #     }) 
+  #     return(list(lag = lags[which.max(cors)], ccf = max(cors, na.rm = TRUE)))
+  #   } else {
+  #     res <- dplccf(y, x, lag.max=lag.max)
+  #     return(list(lag = -res$lag, ccf = res$ccf))
+  #   }
+  # }
+  if (min.overlap < 3) warning("min.overlap should not be below 3 values")
   
-  lag <- dplccf(y1, y2, lag.max = 0.9*max(n1,n2))
+  cors <- my_ccf(y1, y2, min.overlap=min.overlap)
+  lag <- list(lag = cors$lag[which.max(cors$ccf)], ccf = max(cors$ccf, na.rm=TRUE))
   
   if (lag$lag > 0) y2 <- lag(y2, lag$lag)
   if (lag$lag < 0) y2 <- lead(y2, -lag$lag)
@@ -39,7 +82,7 @@ do_align <- function (y1, y2)  {
   # ggplot(data, aes(x = y, y = l30, colour = factor(bullet))) + geom_line()
   # ggplot(bullets, aes(x = y, y = l30, colour = factor(bullet))) + geom_line()
   
-  list(ccf = lag$ccf, lag = lag$lag, y2 = y2[1:n1])
+  list(ccf = lag$ccf, lag = lag$lag, y2 = y2[1:length(y1)])
 }
 
 #' Align two surface cross cuts according to maximal correlation

@@ -8,9 +8,10 @@
 #' @param mean_left If provided, the location of the average left groove
 #' @param mean_right If provided, the location of the average right groove
 #' @param mean_window The window around the means to use
+#' @param land_names The names of the bullet lands for identification during plotting
 #' @export
 #' @import ggplot2
-get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust = 10, groove_cutoff = 400, mean_left = NULL, mean_right = NULL, mean_window = 100) {
+get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust = 10, groove_cutoff = 400, mean_left = NULL, mean_right = NULL, mean_window = 100, land_names = "Unknown Bullet") {
     if (method == "rollapply") 
       grooves <- get_grooves_rollapply(
         bullet = bullet,
@@ -54,11 +55,12 @@ get_grooves_middle <- function(bullet, middle = 75) {
 #' @param mean_left If provided, the location of the average left groove
 #' @param mean_right If provided, the location of the average right groove
 #' @param mean_window The window around the means to use
+#' @param land_names The names of the bullet lands for identification during plotting
 #' @export
 #' @import ggplot2
 #' @importFrom zoo rollapply
 #' @importFrom zoo na.fill
-get_grooves_rollapply <- function(bullet, smoothfactor = 15, adjust = 10, groove_cutoff = 400, mean_left = NULL, mean_right = NULL, mean_window = 100) {
+get_grooves_rollapply <- function(bullet, smoothfactor = 15, adjust = 10, groove_cutoff = 400, mean_left = NULL, mean_right = NULL, mean_window = 100, land_names = "Unknown Bullet") {
 
   original_bullet <- bullet
   if (!is.null(mean_left) && !is.null(mean_right)) {
@@ -125,7 +127,8 @@ get_grooves_rollapply <- function(bullet, smoothfactor = 15, adjust = 10, groove
     # geom_vline(xintercept = xvals[plot_peak_ind], colour = "red") +
     geom_vline(xintercept = xvals[plot_groove_ind], colour = "blue") +
     #geom_vline(xintercept = xvals[plot_peak_ind2], colour = "red") +
-    geom_vline(xintercept = xvals[plot_groove_ind2], colour = "blue")
+    geom_vline(xintercept = xvals[plot_groove_ind2], colour = "blue") + 
+    labs(title = land_names)
   
   return(list(groove = c(original_bullet$y[plot_groove_ind + adjust], 
                          original_bullet$y[plot_groove_ind2 - adjust]), plot = p))

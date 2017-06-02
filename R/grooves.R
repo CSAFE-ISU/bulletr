@@ -117,7 +117,7 @@ get_grooves_rollapply <- function(bullet, smoothfactor = 15, adjust = 10, groove
     plot_groove_ind2 <- length(xvals)
   }
 
-  p <- qplot(xvals[(lengthdiff:(length(xvals)-lengthdiff))], smoothed_truefalse, geom = "line") +
+  p <- ggplot() + geom_line(aes(xvals[(lengthdiff:(length(xvals)-lengthdiff))], smoothed_truefalse)) + 
     geom_point(aes(xvals, yvals)) + 
     theme_bw() +
     # geom_vline(xintercept = xvals[plot_peak_ind], colour = "red") +

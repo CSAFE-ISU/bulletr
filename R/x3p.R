@@ -56,9 +56,13 @@ read_x3p <- function(path, profiley = TRUE) {
                             obs_inc = increments[1] * 1e6)
     
     #plot_ly(z = ~datamat) %>% add_surface()
-    
-    return(list(header.info = bullet_metadata,
-                surface.matrix = datamat))
+    res <- list(header.info = bullet_metadata,
+                surface.matrix = datamat, 
+                feature.info = bullet_info$Record1,
+                general.info= bullet_info$Record2,
+                matrix.info = bullet_info$Record3)
+    class(res) <- "x3p"
+    return(res)
 }
 
 

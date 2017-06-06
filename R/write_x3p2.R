@@ -1,6 +1,12 @@
+#' @export
+write_x3p = function( x , ... )
+{
+  UseMethod( "write_x3p" )
+}
+
 #' Write an x3p file taking Lists: general.info, feature.info, matrix.info and matrix: surface.matrix as inputs
 #' 
-#' @param surface.matrix Surface Matrix with the x y z values to be written (variable type: matrix)
+#' @param x Surface Matrix with the x y z values to be written (variable type: matrix)
 #' @param file where should the file be stored?
 #' @param general.info Setting the Values for the XML to a list
 #' @param feature.info Setting the Values for the XML to a list
@@ -11,6 +17,7 @@
 #' @import xml2
 #' @import digest 
 #' @importFrom utils zip
+#' @method write_x3p default
 #' 
 #' @examples
 #' \dontrun{
@@ -18,8 +25,9 @@
 #'  write_x3p(surface.matrix=surface.matrix, file="out.x3p", profiley = FALSE)
 #'  
 #' }
-write_x3p<- function(surface.matrix, file, general.info=NULL, feature.info=NULL, matrix.info=NULL,  profiley= TRUE)
+write_x3p.default<- function(x, file, general.info=NULL, feature.info=NULL, matrix.info=NULL,  profiley= TRUE)
 {
+  surface.matrix <- x
   if (is.null(general.info)) {
     cat("general info not specified, using template\n")
     general.info = internal$general.info
@@ -140,3 +148,27 @@ write_x3p<- function(surface.matrix, file, general.info=NULL, feature.info=NULL,
   
 }
 
+
+#' Write an x3p file taking Lists: general.info, feature.info, matrix.info and matrix: surface.matrix as inputs
+#' 
+#' @param x x3pobject
+#' @param file where should the file be stored?
+#' @param profiley If FALSE, reorient the matrix to ensure a profile is taken is consistent with surface.matrix (input variable). The default value of Profiley is TRUE
+#' 
+#' @export
+#' @import xml2
+#' @import digest 
+#' @importFrom utils zip
+#' @method write_x3p x3p
+#' 
+#' @examples
+#' \dontrun{
+#'  # use all defaults:
+#'  write_x3p(surface.matrix=surface.matrix, file="out.x3p", profiley = FALSE)
+#'  
+#' }
+write_x3p.x3p<- function(x, file, profiley= TRUE) {
+  write_x3p(x = x$surface.matrix, general.info=x$general.info, feature.info = x$feature.info,
+            matrix.info = x$matrix.info, file=file, profiley=profiley)
+}
+  

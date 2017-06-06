@@ -1,9 +1,10 @@
 #' Write an x3p file taking Lists: general.info, feature.info, matrix.info and matrix: surface.matrix as inputs
 #' 
+#' @param surface.matrix Surface Matrix with the x y z values to be written (variable type: matrix)
+#' @param file where should the file be stored?
 #' @param general.info Setting the Values for the XML to a list
 #' @param feature.info Setting the Values for the XML to a list
 #' @param matrix.info Setting the Values for the XML to a list
-#' @param surface.matrix Surface Matrix with the x y z values to be written (variable type: matrix)
 #' @param profiley If FALSE, reorient the matrix to ensure a profile is taken is consistent with surface.matrix (input variable). The default value of Profiley is TRUE
 #' 
 #' @export
@@ -13,13 +14,24 @@
 #' 
 #' @examples
 #' \dontrun{
-#'  write_x3p(general.info, feature.info,matrix.info,surface.matrix, profiley = FALSE)
-#'  data(example_input_writex3p, envir=environment())
+#'  # use all defaults:
+#'  write_x3p(surface.matrix=surface.matrix, file="out.x3p", profiley = FALSE)
+#'  
 #' }
-
-write_x3p<- function(general.info, feature.info, matrix.info, surface.matrix, profiley= TRUE)
+write_x3p<- function(surface.matrix, file, general.info=NULL, feature.info=NULL, matrix.info=NULL,  profiley= TRUE)
 {
-  
+  if (is.null(general.info)) {
+    cat("general info not specified, using template\n")
+    general.info = internal$general.info
+  }
+  if (is.null(feature.info)) {
+    cat("feature info not specified, using template\n")
+    feature.info = internal$feature.info
+  }
+  if (is.null(matrix.info)) {
+    cat("matrix info not specified, using template\n")
+    matrix.info = internal$matrix.info
+  }
   # Function to assign values to the Record 2 in the main.XML
   record2.assign<- function(a1, record2.data){
     
@@ -66,10 +78,10 @@ write_x3p<- function(general.info, feature.info, matrix.info, surface.matrix, pr
   # Storing the Working Dir path
   orig.path<- getwd()
   # Retrieving the Template XML file
-  data(template_writex3p, envir=environment())
-  a1<- template
+  #data(template_writex3p, envir=environment())
+  a1<- xml2::read_xml("data-raw/templateXML.xml") # gets messed up if it's stored as R object
   # Creating Temp directory and bin directory
-  #' File structure'
+  # 'File structure'
   dir.create("x3pfolder")
   dir.create("x3pfolder/bindata")
   
@@ -121,7 +133,7 @@ write_x3p<- function(general.info, feature.info, matrix.info, surface.matrix, pr
   
   # Write the x3p file and reset path
   setwd("./..")
-  zip(zipfile = 'output.x3p', files = "x3pfolder")
+  zip(zipfile = file, files = "x3pfolder")
   unlink("x3pfolder",recursive = TRUE)
   
   setwd(orig.path) 

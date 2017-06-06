@@ -54,6 +54,12 @@ read_dat <- function(path, profiley = TRUE, sample = 1) {
                    nrow = g1_num_obs_per_profile, 
                    ncol = g1_num_profiles, byrow = TRUE)
   
-  list(header.info = g1_header.info, surface.matrix = g1_mat)
+  res <- list(header.info = g1_header.info,
+              surface.matrix = g1_mat, 
+              feature.info = NULL,
+              general.info= NULL,
+              matrix.info = NULL)
+  class(res) <- "x3p"
+  return(res)
 }
 

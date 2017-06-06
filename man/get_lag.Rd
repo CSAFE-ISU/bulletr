@@ -17,6 +17,7 @@ get_lag(b1, b2, negperc = 10)
 list of lag and correlation achieved. The plot shows b2 on b1
 }
 \description{
-A small piece (y2) is matched to a much larger piece (y1). The lag gives the index location of the best match of b2 in b1.
+A small piece (b2) is matched to a much larger piece (b1). The lag gives the index location of the best match of b2 in b1.
+This function is essentially just a wrapper for \code{my_ccf}, but adds a plot of the result for convenience.
 }
 

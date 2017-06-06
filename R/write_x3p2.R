@@ -15,8 +15,8 @@ write_x3p = function( x , ... )
 #' 
 #' @export
 #' @import xml2
-#' @import digest 
 #' @importFrom utils zip
+#' @importFrom digest digest
 #' @method write_x3p default
 #' 
 #' @examples
@@ -157,7 +157,7 @@ write_x3p.default<- function(x, file, general.info=NULL, feature.info=NULL, matr
 #' 
 #' @export
 #' @import xml2
-#' @import digest 
+#' @importFrom digest digest
 #' @importFrom utils zip
 #' @method write_x3p x3p
 #' 

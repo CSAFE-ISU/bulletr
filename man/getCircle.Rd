@@ -17,4 +17,3 @@ three dimensional vector of the circle center (x0, y0) and the radius
 \description{
 Assuming the variables x and y are describing points located on a circle, the function uses a likelihood approach to estimate center and radius of the circle.
 }
-

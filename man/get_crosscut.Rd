@@ -19,4 +19,3 @@ data frame
 \description{
 Read a crosscut from a 3d surface file
 }
-

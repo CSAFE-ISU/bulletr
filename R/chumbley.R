@@ -1,30 +1,36 @@
 #' Get best lag for two vectors based on cross-correlation
 #' 
-#' A small piece (y2) is matched to a much larger piece (y1). The lag gives the index location of the best match of b2 in b1.
+#' A small piece (b2) is matched to a much larger piece (b1). The lag gives the index location of the best match of b2 in b1.
+#' This function is essentially just a wrapper for \code{my_ccf}, but adds a plot of the result for convenience.
 #' @param b1 vector of striation marks (assuming equidistance between values)
 #' @param b2 (smaller) vector of striation marks
 #' @param negperc amount of lead that b2 can have compared to b1
 #' @return list of lag and correlation achieved. The plot shows b2 on b1
 get_lag <- function(b1, b2, negperc=10) {
-  dplccf <- function(x, y, lag.max = 50, neglag) {
-    x <- as.vector(unlist(x))
-    y <- as.vector(unlist(y))
-    # assume x is the long vector, y is the short vector:
-    nx <- length(x)
-    ny <- length(y)
-    stopifnot(nx >= ny) # we need a better error message here
-    
-    y <- c(y, rep(NA, nx-ny + neglag))
-    x <- c(rep(NA, neglag), x)
-      
-    cors <- sapply(1:(lag.max+neglag), function(lag) {
-      cor(x, lag(y,lag), use="pairwise.complete")
-    }) 
-    list(lag = which.max(cors)-neglag, ccf = max(cors), plot=plot(cors))
-  }
-  # find the window of measurements around the b1.center
+  # dplccf <- function(x, y, lag.max = 50, neglag) {
+  #   x <- as.vector(unlist(x))
+  #   y <- as.vector(unlist(y))
+  #   # assume x is the long vector, y is the short vector:
+  #   nx <- length(x)
+  #   ny <- length(y)
+  #   stopifnot(nx >= ny) # we need a better error message here
+  # 
+  #   y <- c(y, rep(NA, nx-ny + neglag))
+  #   x <- c(rep(NA, neglag), x)
+  # 
+  #   cors <- sapply(1:(lag.max+neglag), function(lag) {
+  #     cor(x, lag(y,lag), use="pairwise.complete")
+  #   })
+  #   list(lag = which.max(cors)-neglag, ccf = max(cors), plot=plot(cors))
+  # }
+
+  
+  
   neglag = negperc/100 * length(b2)
-  lag <- dplccf(b1, b2, lag.max = length(b1)-length(b2), neglag=neglag)
+#  lag <- dplccf(b1, b2, lag.max = length(b1)-length(b2), neglag=neglag)
+  cors <- my_ccf(b1, b2, min.overlap=length(b2)-neglag)
+  lag <- list(lag = cors$lag[which.max(cors$ccf)], ccf = max(cors$ccf, na.rm=TRUE))
+  
 #  browser()
   df1 <- data.frame(x = seq(-neglag+1, length(b1), by = 1), y = c(rep(NA, neglag), b1))
   df2 <- data.frame(x = 1:length(b2) + lag$lag-1, by = 1, y = b2)

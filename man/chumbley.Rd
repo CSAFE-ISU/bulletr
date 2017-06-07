@@ -56,4 +56,3 @@ get_cor(b1, b3, window = 100, b1.left = 1200, lag = 500)
 
 chumbley(b1, b3, window=100, reps=5)
 }
-

@@ -6,11 +6,7 @@ write_x3p = function( x , ... )
 
 #' Write an x3p file taking Lists: general.info, feature.info, matrix.info and matrix: surface.matrix as inputs
 #' 
-<<<<<<< HEAD
 #' @param x Surface Matrix with the x y z values to be written (variable type: matrix)
-=======
-#' @param surface.matrix Surface Matrix with the x y z values to be written (variable type: matrix)
->>>>>>> 4fb059a24f3fba66c0030852584d906baeb20ff9
 #' @param file where should the file be stored?
 #' @param general.info Setting the Values for the XML to a list
 #' @param feature.info Setting the Values for the XML to a list
@@ -29,7 +25,6 @@ write_x3p = function( x , ... )
 #'  write_x3p(surface.matrix=surface.matrix, file="out.x3p", profiley = FALSE)
 #'  
 #' }
-<<<<<<< HEAD
 write_x3p.default<- function(x, file, general.info=NULL, feature.info=NULL, matrix.info=NULL,  profiley= TRUE)
 {
   surface.matrix <- x
@@ -44,21 +39,6 @@ write_x3p.default<- function(x, file, general.info=NULL, feature.info=NULL, matr
   if (is.null(matrix.info)) {
     cat("matrix info not specified, using template\n")
     matrix.info = internal$Record3
-=======
-write_x3p<- function(surface.matrix, file, general.info=NULL, feature.info=NULL, matrix.info=NULL,  profiley= TRUE)
-{
-  if (is.null(general.info)) {
-    cat("general info not specified, using template\n")
-    general.info = internal$general.info
-  }
-  if (is.null(feature.info)) {
-    cat("feature info not specified, using template\n")
-    feature.info = internal$feature.info
-  }
-  if (is.null(matrix.info)) {
-    cat("matrix info not specified, using template\n")
-    matrix.info = internal$matrix.info
->>>>>>> 4fb059a24f3fba66c0030852584d906baeb20ff9
   }
   # Function to assign values to the Record 2 in the main.XML
   record2.assign<- function(a1, record2.data){

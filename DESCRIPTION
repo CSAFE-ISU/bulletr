@@ -22,8 +22,9 @@ Imports:
     plotly,
     robustbase,
     smoother,
-    readr (>= 1.1.0)
+    readr (>= 1.1.0),
+    digest (>= 0.6.12)
 Depends:
     R (>= 3.1)
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 LazyData: true

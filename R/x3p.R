@@ -61,8 +61,7 @@ read_x3p <- function(path, profiley = TRUE) {
                 surface.matrix = datamat, 
                 feature.info = input.info$Record1,
                 general.info= input.info$Record2,
-                matrix.info = input.info$Record3
-                )
+                matrix.info = input.info$Record3)
     class(res) <- "x3p"
     return(res)
 }

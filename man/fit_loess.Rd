@@ -22,4 +22,3 @@ A loess regression is fit to the remaining surface measurements and residuals ar
 The most extreme 0.25% of residuals are filtered from further consideration.
 The result is called the signature of the bullet land.
 }
-

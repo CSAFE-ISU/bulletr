@@ -19,4 +19,3 @@ The striation patterns are not aligned before the distance is calculated.
 The Hausdorff distance is defined as the maximum among the shortest distances between two curves. 
 Here, we allow to trim the largest distances to make the distance more robust
 }
-

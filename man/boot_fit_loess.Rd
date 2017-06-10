@@ -18,4 +18,3 @@ boot_fit_loess(bullet, groove, B = 1000, alpha = 0.95)
 \description{
 Fit a LOESS model with bootstrap samples
 }
-

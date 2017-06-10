@@ -17,4 +17,3 @@ list consisting of a) the maximal cross correlation, b) the lag resulting in the
 \description{
 The bullet with the first name serves as a reference, the second bullet is shifted.
 }
-

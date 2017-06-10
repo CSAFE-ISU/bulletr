@@ -20,4 +20,3 @@ br411 <- read_x3p("Br4 Bullet 4-1.x3p")
 }
 
 }
-

@@ -32,4 +32,3 @@ load("data/b1.rda")
 twist <- getTwist(path="barrel 1 bullet 1", bullet = b1, twistlimit=c(-2,0)*1.5625)
 }
 }
-

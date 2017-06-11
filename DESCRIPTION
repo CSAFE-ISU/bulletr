@@ -4,7 +4,7 @@ Authors@R: c(
     person("Eric", "Hare", email = "erichare@iastate.edu", role = c("aut", "cre")),
     person("Heike", "Hofmann", email = "hofmann@iastate.edu", role = "aut"))
 Version: 0.1.0.9000
-License: GPL-3
+License: MIT
 Date: 2017-04-25
 Description: Analyze bullet lands using nonparametric methods. We provide a
     reading routine for x3p files (see <http://www.openfmc.org> for more

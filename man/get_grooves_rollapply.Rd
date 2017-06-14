@@ -26,3 +26,4 @@ get_grooves_rollapply(bullet, smoothfactor = 15, adjust = 10,
 \description{
 Using rollapply to find grooves in a crosscut
 }
+

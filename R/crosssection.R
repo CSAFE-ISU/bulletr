@@ -1,21 +1,25 @@
 #' Identifying a reliable cross section 
 #' 
-#' Should be changed: x should just indicate lower and upper limit. That is cleaner and should speed things up as well.
-#' @param path path to an x3p file
-#' @param bullet If passed in, the actual bullet already loaded
+#' Identifies a "representative" cross section for a bullet land engraved area.  Striation marks on a bullet land are the
+#' best expressed at the heel (bottom) of a bullet where break-off is still problematic. Using cross-correlation we identify a cross section that is 
+#' the closest to the bottom of the bullet but does not suffer from break-off. 
+#' If the resulting cross section is equal to the maximum of the search area (defined in xlimits), there should be some investigation, whether this cross section is usable. There is the risk of tank rash. 
+#' XXX still to do: are missing values only on the right hand side (leading shoulder)?
+#' @param path path to an x3p file. Ignored in case bullet is not NULL.
+#' @param bullet if not NULL, the bullet land engraved area (in x3p format).
 #' @param distance positive numeric value indicating the distance between cross sections to use for a comparison
 #' @param xlimits vector of values between which to check for cross sections in a stable region
 #' @param minccf minimal value of cross correlation to indicate a stable region
 #' @param span The span for the loess smooth function
-#' @param percmissing maximum percent missing values on the crosscut to be picked
+#' @param percent_missing maximum percent missing values on the crosscut to be picked
 #' @export
 bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(50, 500), minccf = 0.9, span = 0.03, percent_missing = 50) {
     get_cc <- function(x, mybullet) {
       # get cross cut, and smooth it
         pickx <- mybullet$x[which.min(abs(x - unique(mybullet$x)))]
-        
         br111 <- mybullet[mybullet$x == pickx,]
-        br111.groove <- get_grooves(br111)
+        inc <- bullet$header.info$profile_inc
+        br111.groove <- get_grooves(br111, groove_cutoff = 400/inc*1.5625, smoothfactor = 15/inc*1.5625, adjust = 10/inc*1.5625)
         #    br111.groove$plot
         #    browser()
         dframe <- fit_loess(br111, br111.groove)$resid$data
@@ -30,7 +34,7 @@ bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(
     done <- FALSE
     x <- min(xlimits)
     first_cc <- get_cc(x, mybullet = dbr111)
-    # the 0.5 should be a parameter - might be a problem with short sequences down the line
+
     while(dim(first_cc)[1] < bullet$header.info$num_obs_per_profile*percent_missing/100) {
       x <- x + distance
       first_cc <- get_cc(x, mybullet = dbr111)

@@ -26,3 +26,4 @@ my_ccf(x, lag(x, 5), min.overlap=3)
 x <- runif(100)
 bulletr:::my_ccf(x[45:50], x, min.overlap=6)
 }
+

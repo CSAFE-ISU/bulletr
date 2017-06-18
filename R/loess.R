@@ -51,7 +51,7 @@ fit_loess <- function(bullet, groove, span = 0.75) {
     y <- NULL
     chop <- NULL
     
-    bullet_filter <- subset(bullet, !is.na(value) & y > groove$groove[1] & y < groove$groove[2])
+    bullet_filter <- subset(bullet, !is.na(value) & y > groove[1] & y < groove[2])
     my.loess <- loess(value ~ y, data = bullet_filter, span = span)
     bullet_filter$fitted <- fitted(my.loess)
     bullet_filter$resid <- resid(my.loess)

@@ -11,7 +11,15 @@
 #' @export
 #' @import ggplot2
 get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust = 10, groove_cutoff = 400, mean_left = NULL, mean_right = NULL, mean_window = 100) {
-    if (method == "rollapply") 
+    if (method == "rollapply") {
+      # make sure there is only one x 
+      if (length(unique(bullet$x)) > 1) {
+        message("summarizing multiple profiles by a averaging across values\n")
+        bullet <- bullet %>% group_by(y) %>% summarize(
+          x = mean(x, na.rm = TRUE),
+          value = mean(value, na.rm=TRUE)
+        )
+      }
       grooves <- get_grooves_rollapply(
         bullet = bullet,
         smoothfactor = smoothfactor,
@@ -21,6 +29,7 @@ get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust 
         mean_right = mean_right, 
         mean_window = mean_window
       )
+    }  
     if (method == "middle") {
       grooves <- get_grooves_middle(
         bullet = bullet,

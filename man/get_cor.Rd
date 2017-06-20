@@ -20,3 +20,4 @@ get_cor(b1, b2, window, b1.left, lag)
 \description{
 Get correlation between two signatures
 }
+

@@ -119,12 +119,21 @@ getTwist <- function(path, bullet = NULL, twistlimit = NULL, cutoff = .75) {
 #' 
 #' @param path The path to the x3p file
 #' @param bullet If not null, use this pre-loaded bullet
-#' 
+#' @param sample integer value. take every 1 in sample values from the surface matrix
+#' @param ... parameters passed on to plot_ly call
 #' @importFrom plotly plot_ly
 #' @export
-plot_3d_land <- function(path, bullet = NULL) {
+#' @examples 
+#' data(br411)
+#' plot_3d_land(bullet=br411, sample=2)
+plot_3d_land <- function(path, bullet = NULL, sample=1, ...) {
     if (is.null(bullet)) bullet <- read_x3p(path)
     surfmat <- bullet$surface.matrix
+    if (sample != 1) {
+      xindx <- seq.int(from=1, to=dim(surfmat)[1], by=sample)
+      yindx <- seq.int(from=1, to=dim(surfmat)[2], by=sample)
+      surfmat <- surfmat[xindx, yindx]
+    }
     
-    plot_ly(z = surfmat, type = "surface")
+    plot_ly(z = surfmat, type = "surface", ...)
 }

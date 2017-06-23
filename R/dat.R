@@ -15,12 +15,15 @@
 read_dat <- function(path, profiley = TRUE, sample = 1) {
   g1 <- read_delim(path, 
                        delim = " ", 
-                       col_names = c("y", "x", "value"))
+                       col_names = c("x", "y", "value"))
 
-  g1$x <- -g1$x
+  if (!profiley) {
+    names(g1) <- c("y", "x", "value")
+    g1$x <- -g1$x
+  }
   
   if (profiley) {
-    names(g1) <- c("x", "y", "value")
+    g1$x <- -g1$x
     g1$y <- -g1$y
   }
   

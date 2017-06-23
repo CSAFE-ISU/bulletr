@@ -10,7 +10,7 @@
 #' @param mean_window The window around the means to use
 #' @export
 #' @import ggplot2
-get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust = 10, groove_cutoff = 400, mean_left = NULL, mean_right = NULL, mean_window = 100) {
+get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust = 10, groove_cutoff = 400, mean_left = NULL, mean_right = NULL, mean_window = 100, second_smooth = T, which_fun = mean) {
     if (method == "rollapply") 
       grooves <- get_grooves_rollapply(
         bullet = bullet,
@@ -19,7 +19,9 @@ get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust 
         groove_cutoff = groove_cutoff, 
         mean_left = mean_left, 
         mean_right = mean_right, 
-        mean_window = mean_window
+        mean_window = mean_window, 
+        second_smooth = second_smooth, 
+        which_fun = which_fun
       )
     if (method == "middle") {
       grooves <- get_grooves_middle(
@@ -27,7 +29,7 @@ get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust 
         middle = 75
       )
     }
-
+    
     return(grooves)
 }
 
@@ -54,11 +56,13 @@ get_grooves_middle <- function(bullet, middle = 75) {
 #' @param mean_left If provided, the location of the average left groove
 #' @param mean_right If provided, the location of the average right groove
 #' @param mean_window The window around the means to use
+#' @param second_smooth Whether or not to smooth a second time
+#' @param which_fun Which function to use in the rollapply statement
 #' @export
 #' @import ggplot2
 #' @importFrom zoo rollapply
 #' @importFrom zoo na.fill
-get_grooves_rollapply <- function(bullet, smoothfactor = 15, adjust = 10, groove_cutoff = 400, mean_left = NULL, mean_right = NULL, mean_window = 100) {
+get_grooves_rollapply <- function(bullet, smoothfactor = 15, adjust = 10, groove_cutoff = 400, mean_left = NULL, mean_right = NULL, mean_window = 100, second_smooth = T, which_fun = mean) {
 
   original_bullet <- bullet
   if (!is.null(mean_left) && !is.null(mean_right)) {
@@ -77,8 +81,13 @@ get_grooves_rollapply <- function(bullet, smoothfactor = 15, adjust = 10, groove
   }
   
   value_filled <- na.fill(bullet$value, "extend")
-  smoothed <- rollapply(value_filled, smoothfactor, function(x) mean(x))
-  smoothed_truefalse <- rollapply(smoothed, smoothfactor, function(x) mean(x))
+  smoothed <- rollapply(value_filled, smoothfactor, function(x) which_fun(x))
+  # Add in an if statement, to only do the first smoothing if the second_smooth parameter is equal to FALSE
+  if (second_smooth == T){
+    smoothed_truefalse <- rollapply(smoothed, smoothfactor, function(x) which_fun(x))
+  }
+  else {smoothed_truefalse <- smoothed}
+  
   
   lengthdiff <- length(bullet$value) - length(smoothed_truefalse)
   
@@ -131,4 +140,5 @@ get_grooves_rollapply <- function(bullet, smoothfactor = 15, adjust = 10, groove
   return(list(groove = c(original_bullet$y[plot_groove_ind + adjust], 
                          original_bullet$y[plot_groove_ind2 - adjust]), plot = p))
 }
-  
+
+

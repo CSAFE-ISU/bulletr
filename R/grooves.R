@@ -14,7 +14,7 @@ get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust 
     if (method == "rollapply") {
       # make sure there is only one x 
       if (length(unique(bullet$x)) > 1) {
-        message(sprintf("summarizing %d profiles by a averaging across values\n", length(unique(bullet$x))))
+        message(sprintf("summarizing %d profiles by averaging across values\n", length(unique(bullet$x))))
         bullet <- bullet %>% group_by(y) %>% summarize(
           x = mean(x, na.rm = TRUE),
           value = mean(value, na.rm=TRUE)

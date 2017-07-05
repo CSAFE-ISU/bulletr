@@ -3,15 +3,23 @@
 #' @param bullet data frame with topological data in x-y-z format
 #' @param method method to use for identifying grooves. Defaults to "rollapply"
 #' @param smoothfactor The smoothing window to use - XXX the smoothing window seems to depend on the resolution at which the data has been collected. 
-#' @param adjust positive number to adjust the grooves
+#' @param adjust positive number to adjust the grooves - XXX should be expressed in microns rather than an index
 #' @param groove_cutoff The index at which a groove cannot exist past - XXX this parameter should be expressed in microns rather than as an index to be able to properly deal with different resolutions
 #' @param mean_left If provided, the location of the average left groove
 #' @param mean_right If provided, the location of the average right groove
 #' @param mean_window The window around the means to use
 #' @export
 #' @import ggplot2
-get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust = 10, groove_cutoff = 400, mean_left = NULL, mean_right = NULL, mean_window = 100, second_smooth = T, which_fun = mean) {
-    if (method == "rollapply") 
+get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust = 10, groove_cutoff = 400, mean_left = NULL, mean_right = NULL, mean_window = 100) {
+    if (method == "rollapply") {
+      # make sure there is only one x 
+      if (length(unique(bullet$x)) > 1) {
+        message(sprintf("summarizing %d profiles by averaging across values\n", length(unique(bullet$x))))
+        bullet <- bullet %>% group_by(y) %>% summarize(
+          x = mean(x, na.rm = TRUE),
+          value = mean(value, na.rm=TRUE)
+        )
+      }
       grooves <- get_grooves_rollapply(
         bullet = bullet,
         smoothfactor = smoothfactor,
@@ -19,17 +27,16 @@ get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust 
         groove_cutoff = groove_cutoff, 
         mean_left = mean_left, 
         mean_right = mean_right, 
-        mean_window = mean_window, 
-        second_smooth = second_smooth, 
-        which_fun = which_fun
+        mean_window = mean_window
       )
+    }  
     if (method == "middle") {
       grooves <- get_grooves_middle(
         bullet = bullet,
         middle = 75
       )
     }
-    
+
     return(grooves)
 }
 
@@ -56,13 +63,11 @@ get_grooves_middle <- function(bullet, middle = 75) {
 #' @param mean_left If provided, the location of the average left groove
 #' @param mean_right If provided, the location of the average right groove
 #' @param mean_window The window around the means to use
-#' @param second_smooth Whether or not to smooth a second time
-#' @param which_fun Which function to use in the rollapply statement
 #' @export
 #' @import ggplot2
 #' @importFrom zoo rollapply
 #' @importFrom zoo na.fill
-get_grooves_rollapply <- function(bullet, smoothfactor = 15, adjust = 10, groove_cutoff = 400, mean_left = NULL, mean_right = NULL, mean_window = 100, second_smooth = T, which_fun = mean) {
+get_grooves_rollapply <- function(bullet, smoothfactor = 15, adjust = 10, groove_cutoff = 400, mean_left = NULL, mean_right = NULL, mean_window = 100) {
 
   original_bullet <- bullet
   if (!is.null(mean_left) && !is.null(mean_right)) {
@@ -81,13 +86,8 @@ get_grooves_rollapply <- function(bullet, smoothfactor = 15, adjust = 10, groove
   }
   
   value_filled <- na.fill(bullet$value, "extend")
-  smoothed <- rollapply(value_filled, smoothfactor, function(x) which_fun(x))
-  # Add in an if statement, to only do the first smoothing if the second_smooth parameter is equal to FALSE
-  if (second_smooth == T){
-    smoothed_truefalse <- rollapply(smoothed, smoothfactor, function(x) which_fun(x))
-  }
-  else {smoothed_truefalse <- smoothed}
-  
+  smoothed <- rollapply(value_filled, smoothfactor, function(x) mean(x))
+  smoothed_truefalse <- rollapply(smoothed, smoothfactor, function(x) mean(x))
   
   lengthdiff <- length(bullet$value) - length(smoothed_truefalse)
   
@@ -126,19 +126,13 @@ get_grooves_rollapply <- function(bullet, smoothfactor = 15, adjust = 10, groove
     plot_groove_ind2 <- length(xvals)
   }
 
-  smoothed_diff <- floor(lengthdiff/2)
-  p <- ggplot() + geom_point(aes(xvals, yvals), size = .3) + 
-    geom_line(aes(xvals[((smoothed_diff+1):(length(xvals)-smoothed_diff))], smoothed_truefalse), colour = "red") + 
-    
+  p <- qplot(xvals, yvals, geom = "line") +
     theme_bw() +
     # geom_vline(xintercept = xvals[plot_peak_ind], colour = "red") +
     geom_vline(xintercept = xvals[plot_groove_ind], colour = "blue") +
     #geom_vline(xintercept = xvals[plot_peak_ind2], colour = "red") +
-    geom_vline(xintercept = xvals[plot_groove_ind2], colour = "blue") + 
-    labs(title = bullet$id_name[1])
+    geom_vline(xintercept = xvals[plot_groove_ind2], colour = "blue")
   
   return(list(groove = c(original_bullet$y[plot_groove_ind + adjust], 
                          original_bullet$y[plot_groove_ind2 - adjust]), plot = p))
 }
-
-

@@ -15,10 +15,16 @@
 read_dat <- function(path, profiley = TRUE, sample = 1) {
   g1 <- read_delim(path, 
                        delim = " ", 
-                       col_names = c("y", "x", "value"))
+                       col_names = c("x", "y", "value"))
+
   if (!profiley) {
-    names(g1) <- c("x", "y", "value")
+    names(g1) <- c("y", "x", "value")
     g1$x <- -g1$x
+  }
+  
+  if (profiley) {
+    g1$x <- -g1$x
+    g1$y <- -g1$y
   }
   
   g1_clean <- g1 %>% 
@@ -54,6 +60,12 @@ read_dat <- function(path, profiley = TRUE, sample = 1) {
                    nrow = g1_num_obs_per_profile, 
                    ncol = g1_num_profiles, byrow = TRUE)
   
-  list(header.info = g1_header.info, surface.matrix = g1_mat)
+  res <- list(header.info = g1_header.info,
+              surface.matrix = g1_mat, 
+              feature.info = NULL,
+              general.info= NULL,
+              matrix.info = NULL)
+  class(res) <- "x3p"
+  return(res)
 }
 

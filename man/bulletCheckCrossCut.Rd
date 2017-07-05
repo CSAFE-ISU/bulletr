@@ -8,9 +8,9 @@ bulletCheckCrossCut(path, bullet = NULL, distance = 25, xlimits = c(50,
   500), minccf = 0.9, span = 0.03, percent_missing = 50)
 }
 \arguments{
-\item{path}{path to an x3p file}
+\item{path}{path to an x3p file. Ignored in case bullet is not NULL.}
 
-\item{bullet}{If passed in, the actual bullet already loaded}
+\item{bullet}{if not NULL, the bullet land engraved area (in x3p format).}
 
 \item{distance}{positive numeric value indicating the distance between cross sections to use for a comparison}
 
@@ -20,9 +20,13 @@ bulletCheckCrossCut(path, bullet = NULL, distance = 25, xlimits = c(50,
 
 \item{span}{The span for the loess smooth function}
 
-\item{percmissing}{maximum percent missing values on the crosscut to be picked}
+\item{percent_missing}{maximum percent missing values on the crosscut to be picked}
 }
 \description{
-Should be changed: x should just indicate lower and upper limit. That is cleaner and should speed things up as well.
+Identifies a "representative" cross section for a bullet land engraved area.  Striation marks on a bullet land are the
+best expressed at the heel (bottom) of a bullet where break-off is still problematic. Using cross-correlation we identify a cross section that is 
+the closest to the bottom of the bullet but does not suffer from break-off. 
+If the resulting cross section is equal to the maximum of the search area (defined in xlimits), there should be some investigation, whether this cross section is usable. There is the risk of tank rash. 
+XXX still to do: are missing values only on the right hand side (leading shoulder)?
 }
 

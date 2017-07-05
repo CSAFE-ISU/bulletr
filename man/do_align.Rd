@@ -4,12 +4,14 @@
 \alias{do_align}
 \title{Align two surface cross cuts using cross correlation}
 \usage{
-do_align(y1, y2)
+do_align(y1, y2, min.overlap = 0.1 * max(length(y1), length(y2)))
 }
 \arguments{
 \item{y1}{vector of striation marks (assuming equidistance between values)}
 
 \item{y2}{vector of striation marks}
+
+\item{min.overlap}{integer value: what is the minimal number of values between y1 and y2 that should be considered?}
 }
 \value{
 list consisting of a) the maximal cross correlation, b) the lag resulting in the highest cross correlation, 
@@ -17,5 +19,13 @@ and c) a vector of length y1 with aligned values of y2.
 }
 \description{
 The first vector serves as a reference, the second vector is shifted, such that it aligns best with the first and has the same length as the first vector.
+}
+\examples{
+x <- runif(20)
+do_align(x, lead(x, 5))
+do_align(x, lag(x, 5), min.overlap=2)
+do_align(x, lag(x, 5), min.overlap=3)
+do_align(x, x[-(1:5)], min.overlap=3)
+do_align(x[-(1:5)], x, min.overlap=3)
 }
 

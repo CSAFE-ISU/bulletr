@@ -4,14 +4,22 @@
 \alias{plot_3d_land}
 \title{Plot a bullet land using plotly}
 \usage{
-plot_3d_land(path, bullet = NULL)
+plot_3d_land(path, bullet = NULL, sample = 1, ...)
 }
 \arguments{
 \item{path}{The path to the x3p file}
 
 \item{bullet}{If not null, use this pre-loaded bullet}
+
+\item{sample}{integer value. take every 1 in sample values from the surface matrix}
+
+\item{...}{parameters passed on to plot_ly call}
 }
 \description{
 Plot a bullet land using plotly
+}
+\examples{
+data(br411)
+plot_3d_land(bullet=br411, sample=2)
 }
 

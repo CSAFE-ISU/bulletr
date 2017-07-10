@@ -3,7 +3,7 @@
 #' @param bullet data frame with topological data in x-y-z format
 #' @param method method to use for identifying grooves. Defaults to "rollapply"
 #' @param smoothfactor The smoothing window to use - XXX the smoothing window seems to depend on the resolution at which the data has been collected. 
-#' @param adjust positive number to adjust the grooves
+#' @param adjust positive number to adjust the grooves - XXX should be expressed in microns rather than an index
 #' @param groove_cutoff The index at which a groove cannot exist past - XXX this parameter should be expressed in microns rather than as an index to be able to properly deal with different resolutions
 #' @param mean_left If provided, the location of the average left groove
 #' @param mean_right If provided, the location of the average right groove
@@ -14,7 +14,7 @@ get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust 
     if (method == "rollapply") {
       # make sure there is only one x 
       if (length(unique(bullet$x)) > 1) {
-        message("summarizing multiple profiles by a averaging across values\n")
+        message(sprintf("summarizing %d profiles by averaging across values\n", length(unique(bullet$x))))
         bullet <- bullet %>% group_by(y) %>% summarize(
           x = mean(x, na.rm = TRUE),
           value = mean(value, na.rm=TRUE)

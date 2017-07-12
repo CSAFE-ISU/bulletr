@@ -24,4 +24,3 @@ d2 <- read_dat("L1.dat", profiley = FALSE)
 }
 
 }
-

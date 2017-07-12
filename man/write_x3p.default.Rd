@@ -4,13 +4,16 @@
 \alias{write_x3p.default}
 \title{Write an x3p file taking Lists: general.info, feature.info, matrix.info and matrix: surface.matrix as inputs}
 \usage{
-\method{write_x3p}{default}(x, file, general.info = NULL,
-  feature.info = NULL, matrix.info = NULL, profiley = TRUE)
+\method{write_x3p}{default}(x, file, header.info = x$header.info,
+  general.info = NULL, feature.info = NULL, matrix.info = NULL,
+  profiley = TRUE)
 }
 \arguments{
 \item{x}{Surface Matrix with the x y z values to be written (variable type: matrix)}
 
 \item{file}{where should the file be stored?}
+
+\item{header.info}{header info of x3p}
 
 \item{general.info}{Setting the Values for the XML to a list}
 
@@ -30,4 +33,3 @@ Write an x3p file taking Lists: general.info, feature.info, matrix.info and matr
  
 }
 }
-

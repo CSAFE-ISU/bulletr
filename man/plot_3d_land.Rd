@@ -22,4 +22,3 @@ Plot a bullet land using plotly
 data(br411)
 plot_3d_land(bullet=br411, sample=2)
 }
-

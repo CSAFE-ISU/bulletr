@@ -18,4 +18,3 @@ smoothloess(x, y, span, sub = 2)
 \description{
 Predict smooth from a fit
 }
-

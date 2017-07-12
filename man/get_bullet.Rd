@@ -14,4 +14,3 @@ get_bullet(path, x = 243.75)
 \description{
 Deprecated function use get_crosscut
 }
-

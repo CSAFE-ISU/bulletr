@@ -8,6 +8,7 @@ write_x3p = function( x , ... )
 #' 
 #' @param x Surface Matrix with the x y z values to be written (variable type: matrix)
 #' @param file where should the file be stored?
+#' @param header.info header info of x3p
 #' @param general.info Setting the Values for the XML to a list
 #' @param feature.info Setting the Values for the XML to a list
 #' @param matrix.info Setting the Values for the XML to a list
@@ -25,7 +26,7 @@ write_x3p = function( x , ... )
 #'  write_x3p(surface.matrix=surface.matrix, file="out.x3p", profiley = FALSE)
 #'  
 #' }
-write_x3p.default<- function(x, file, general.info=NULL, feature.info=NULL, matrix.info=NULL,  profiley= TRUE)
+write_x3p.default<- function(x, file, header.info= x$header.info, general.info=NULL, feature.info=NULL, matrix.info=NULL,  profiley= TRUE)
 {
   surface.matrix <- x
   if (is.null(general.info)) {
@@ -35,11 +36,20 @@ write_x3p.default<- function(x, file, general.info=NULL, feature.info=NULL, matr
   if (is.null(feature.info)) {
     cat("feature info not specified, using template\n")
     feature.info = internal$Record1
+
   }
   if (is.null(matrix.info)) {
     cat("matrix info not specified, using template\n")
     matrix.info = internal$Record3
+
   }
+  
+  feature.info$Axes$CX$Increment = header.info$obs_inc
+  feature.info$Axes$CY$Increment = header.info$profile_inc
+  
+  matrix.info$MatrixDimension$SizeX = header.info$num_obs_per_profile
+  matrix.info$MatrixDimension$SizeY = header.info$num_profiles
+  
   # Function to assign values to the Record 2 in the main.XML
   record2.assign<- function(a1, record2.data){
     
@@ -87,7 +97,7 @@ write_x3p.default<- function(x, file, general.info=NULL, feature.info=NULL, matr
   orig.path<- getwd()
   # Retrieving the Template XML file
   #data(template_writex3p, envir=environment())
-  a1<- xml2::read_xml("data-raw/templateXML.xml") # gets messed up if it's stored as R object
+  a1<- xml2::read_xml(paste0(find.package("bulletr", lib.loc=NULL, quiet = TRUE), "/templateXML.xml")) # gets messed up if it's stored as R object
   # Creating Temp directory and bin directory
   # 'File structure'
   dir.create("x3pfolder")
@@ -101,22 +111,16 @@ write_x3p.default<- function(x, file, general.info=NULL, feature.info=NULL, matr
   
   sizes<- c(matrix.info$MatrixDimension$SizeX, matrix.info$MatrixDimension$SizeY, matrix.info$MatrixDimension$SizeZ)
   sizes<- as.numeric(sizes)
-  increments<- c(feature.info$CX$Increment, feature.info$CY$Increment, feature.info$CZ$Increment)
+  increments<- c(feature.info$Axes$CX$Increment, feature.info$Axes$CY$Increment, feature.info$Axes$CZ$Increment)
   increments<- as.numeric(increments)
-  
-  # Reorienting the Surface Matrix according to Profiley Information  
-  if (profiley == FALSE && sizes[2] > sizes[1]) {
-    sizes <- sizes[c(2, 1, 3)]
-    increments <- increments[c(2, 1, 3)]
-  }
   
   # Updating the list values
   matrix.info$MatrixDimension$SizeX<- as.character(sizes[1])
   matrix.info$MatrixDimension$SizeY<- as.character(sizes[2])
   matrix.info$MatrixDimension$SizeZ<- as.character(sizes[3])
-  feature.info$CX$Increment<- as.character(1e-06*increments[1])
-  feature.info$CY$Increment<- as.character(1e-06*increments[2])
-  feature.info$CZ$Increment<- as.character(increments[3])
+  feature.info$Axes$CX$Increment<- as.character(1e-06*increments[1])
+  feature.info$Axes$CY$Increment<- as.character(1e-06*increments[2])
+  feature.info$Axes$CZ$Increment<- as.character(increments[3])
   
   # Updating the Records : main.xml.
   record3.assign(a1, matrix.info)
@@ -168,7 +172,7 @@ write_x3p.default<- function(x, file, general.info=NULL, feature.info=NULL, matr
 #'  
 #' }
 write_x3p.x3p<- function(x, file, profiley= TRUE) {
-  write_x3p(x = x$surface.matrix, general.info=x$general.info, feature.info = x$feature.info,
+  write_x3p(x = x$surface.matrix, header.info= x$header.info, general.info=x$general.info, feature.info = x$feature.info,
             matrix.info = x$matrix.info, file=file, profiley=profiley)
 }
   

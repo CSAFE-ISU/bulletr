@@ -8,9 +8,10 @@
 #' @param mean_left If provided, the location of the average left groove
 #' @param mean_right If provided, the location of the average right groove
 #' @param mean_window The window around the means to use
+#' @param second_smooth Whether or not to smooth a second time
 #' @export
 #' @import ggplot2
-get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust = 10, groove_cutoff = 400, mean_left = NULL, mean_right = NULL, mean_window = 100) {
+get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust = 10, groove_cutoff = 400, mean_left = NULL, mean_right = NULL, mean_window = 100, second_smooth = T) {
     if (method == "rollapply") {
       # make sure there is only one x 
       if (length(unique(bullet$x)) > 1) {
@@ -27,7 +28,8 @@ get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust 
         groove_cutoff = groove_cutoff, 
         mean_left = mean_left, 
         mean_right = mean_right, 
-        mean_window = mean_window
+        mean_window = mean_window,
+        second_smooth = second_smooth
       )
     }  
     if (method == "middle") {

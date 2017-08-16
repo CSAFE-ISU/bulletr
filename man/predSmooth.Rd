@@ -17,4 +17,3 @@ data frame with predictions and residuals
 \description{
 Fit a smooth line throught x and y, find predictive values and resiudals.
 }
-

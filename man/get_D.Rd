@@ -18,4 +18,3 @@ get_D(y1, y2, normalize = TRUE, resolution = 0.645)
 \description{
 Compute the Euclidean distance between two toolmark patterns. The striation patterns are not aligned before the distance is calculated.
 }
-

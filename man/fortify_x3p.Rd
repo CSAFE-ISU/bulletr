@@ -21,4 +21,3 @@ data(br411)
 br411_fort <- fortify_x3p(br411)
 head(br411_fort)
 }
-

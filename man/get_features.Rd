@@ -12,4 +12,3 @@ get_features(res)
 \description{
 Get a feature vector for a pair of lands
 }
-

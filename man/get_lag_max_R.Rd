@@ -22,4 +22,3 @@ list of lag and correlation achieved. The plot shows b2 on b1.
 See Chumbley et al (2010).
 A small piece (b2) is matched to a much larger piece (b1). The lag gives the index location of the best match of b2 in b1.
 }
-

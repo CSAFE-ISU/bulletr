@@ -109,6 +109,7 @@ unfortify_x3p <- function(df) {
                                            ncol = length(unique(df$x)),
                                            byrow = TRUE))
     
+    class(my.lst) <- "x3p"
     return(my.lst)
 }
 

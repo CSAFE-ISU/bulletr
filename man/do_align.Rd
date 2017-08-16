@@ -28,4 +28,3 @@ do_align(x, lag(x, 5), min.overlap=3)
 do_align(x, x[-(1:5)], min.overlap=3)
 do_align(x[-(1:5)], x, min.overlap=3)
 }
-

@@ -15,7 +15,7 @@ get_grooves(bullet, method = "rollapply", smoothfactor = 15, adjust = 10,
 
 \item{smoothfactor}{The smoothing window to use - XXX the smoothing window seems to depend on the resolution at which the data has been collected.}
 
-\item{adjust}{positive number to adjust the grooves}
+\item{adjust}{positive number to adjust the grooves - XXX should be expressed in microns rather than an index}
 
 \item{groove_cutoff}{The index at which a groove cannot exist past - XXX this parameter should be expressed in microns rather than as an index to be able to properly deal with different resolutions}
 
@@ -28,4 +28,3 @@ get_grooves(bullet, method = "rollapply", smoothfactor = 15, adjust = 10,
 \description{
 Find the grooves of a bullet land
 }
-

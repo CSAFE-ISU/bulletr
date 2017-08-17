@@ -11,7 +11,7 @@
 #' data(br411)
 #' class(br411) <- "x3p"
 #' image(br411, file = "br411.png")
-image.x3p <- function(x, file, col = "#cd7f32", ...) {
+image.x3p <- function(x, file = NULL, col = "#cd7f32", ...) {
 #  browser()
   surface <- x$surface.matrix
   z <- 2*surface # Exaggerate the relief

@@ -4,12 +4,12 @@
 \alias{image.x3p}
 \title{Plot x3p object as an image}
 \usage{
-\method{image}{x3p}(x, file, col = "#cd7f32", ...)
+\method{image}{x3p}(x, file = NULL, col = "#cd7f32", ...)
 }
 \arguments{
 \item{x}{x3p object}
 
-\item{file}{file name for saving}
+\item{file}{file name for saving, if file is NULL the opengl device stays open}
 
 \item{col}{color specification}
 

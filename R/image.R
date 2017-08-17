@@ -9,7 +9,6 @@
 #' @importFrom rgl snapshot3d
 #' @examples 
 #' data(br411)
-#' class(br411) <- "x3p"
 #' image(br411, file = "br411.png")
 image.x3p <- function(x, file = NULL, col = "#cd7f32", ...) {
 #  browser()

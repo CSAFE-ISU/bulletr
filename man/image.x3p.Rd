@@ -20,6 +20,5 @@ Plot x3p object as an image
 }
 \examples{
 data(br411)
-class(br411) <- "x3p"
 image(br411, file = "br411.png")
 }

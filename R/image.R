@@ -1,10 +1,11 @@
 #' Plot x3p object as an image
 #' 
 #' @param x x3p object
-#' @param file file name for saving
+#' @param file file name for saving, if file is NULL the opengl device stays open
 #' @param col color specification
 #' @param ... not used
 #' @export
+#' @import rgl
 #' @importFrom rgl snapshot3d
 #' @examples 
 #' data(br411)
@@ -27,7 +28,7 @@ image.x3p <- function(x, file, col = "#cd7f32", ...) {
 #  col <- "#b87333" #copper
   
   
-  params <- getr3dDefaults()
+  params <- rgl::r3dDefaults
   params$userMatrix <- diag(c(1,1,1,1))
   
   open3d(params=params)
@@ -41,7 +42,7 @@ image.x3p <- function(x, file, col = "#cd7f32", ...) {
 
   save <- par3d()
   save$viewport[3:4] <- c(750, 250)
-  save$windowRect <- c(41, 125, 791, 375)
+  save$windowRect <- c(40, 125, 790, 375)
 suppressWarnings({
     par3d(save)
 })
@@ -52,7 +53,8 @@ suppressWarnings({
   })
   
   Sys.sleep(2)
+  if (!is.null(file)) {
   rgl.snapshot(file=file)
   rgl.close()
-  #snapshot3d(file=file)
+  }
 }

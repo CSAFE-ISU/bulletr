@@ -1,8 +1,11 @@
 #' Plot x3p object as an image
 #' 
 #' @param x x3p object
-#' @param file file name for saving, if file is NULL the opengl device stays open
+#' @param file file name for saving, if file is NULL the opengl device stays open. 
+#' The file extension determines the type of output. Possible extensions are png, stl (suitable for 3d printing).
 #' @param col color specification
+#' @param size vector of width and height
+#' @param zoom numeric value indicating the amount of zoom
 #' @param ... not used
 #' @export
 #' @import rgl
@@ -10,7 +13,7 @@
 #' @examples 
 #' data(br411)
 #' image(br411, file = "br411.png")
-image.x3p <- function(x, file = NULL, col = "#cd7f32", ...) {
+image.x3p <- function(x, file = NULL, col = "#cd7f32", size = c(750, 250), zoom= 0.35, ...) {
   #  browser()
   surface <- x$surface.matrix
   z <- 2*surface # Exaggerate the relief
@@ -20,9 +23,9 @@ image.x3p <- function(x, file = NULL, col = "#cd7f32", ...) {
   params <- rgl::r3dDefaults
 #  params$viewport <- c(0,0, 750, 250)
 #  
-  params$windowRect <- c(40, 125, 790, 375)
+  params$windowRect <- c(40, 125, 40+size[1], 125+size[2])
   params$userMatrix <- diag(c(1,1,1,1))
-  params$zoom <- 0.35
+  params$zoom <- zoom
   
   open3d(params=params)
   rgl.pop("lights")
@@ -34,7 +37,14 @@ image.x3p <- function(x, file = NULL, col = "#cd7f32", ...) {
   surface3d(x, y, z, color = col, back = "lines")
 
   if (!is.null(file)) {
-    rgl.snapshot(file=file)
+    splits <- strsplit(file, split ="\\.")
+    extension <- splits[[1]][length(splits[[1]])]
+    if (extension=="png") {
+      rgl.snapshot(file=file)
+    }
+    if (extension=="stl") {
+      writeSTL(con=file)
+    }
     rgl.close()
   }
 }

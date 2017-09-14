@@ -4,14 +4,20 @@
 \alias{image.x3p}
 \title{Plot x3p object as an image}
 \usage{
-\method{image}{x3p}(x, file = NULL, col = "#cd7f32", ...)
+\method{image}{x3p}(x, file = NULL, col = "#cd7f32", size = c(750, 250),
+  zoom = 0.35, ...)
 }
 \arguments{
 \item{x}{x3p object}
 
-\item{file}{file name for saving, if file is NULL the opengl device stays open}
+\item{file}{file name for saving, if file is NULL the opengl device stays open. 
+The file extension determines the type of output. Possible extensions are png, stl (suitable for 3d printing).}
 
 \item{col}{color specification}
+
+\item{size}{vector of width and height}
+
+\item{zoom}{numeric value indicating the amount of zoom}
 
 \item{...}{not used}
 }

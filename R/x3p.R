@@ -1,7 +1,8 @@
 #' Read an x3p file as an R Data Frame
 #' 
 #' @param path The file path to the x3p file
-#' @param profiley If TRUE, rotate the matrix (if necessary) to ensure a profile is taken across y
+#' @param profiley If TRUE, rotate the matrix to ensure a profile is taken across y
+#' @param automatic use file dimensions to determine whether file needs to be rotated. Assumes long dimension is on y, overwrites profiley. Only works sensibly for bullet lands. For more control, set automatic to FALSE
 #' 
 #' @export
 #' @import xml2 
@@ -12,7 +13,7 @@
 #' br411 <- read_x3p("Br4 Bullet 4-1.x3p")
 #' }
 #'
-read_x3p <- function(path, profiley = TRUE) {
+read_x3p <- function(path, profiley = TRUE, automatic = TRUE) {
     ## Create a temp directory to unzip x3p file
     mydir <- tempdir()
     result <- unzip(path, exdir = mydir)
@@ -40,8 +41,14 @@ read_x3p <- function(path, profiley = TRUE) {
                       nrow = sizes[1],
                       ncol = sizes[2]) * 1e6
     
+    if (automatic) {
+      profiley <- sizes[2] > sizes[1]
+    }
+      
+    
     ## Rotate the matrix
-    if (profiley && sizes[2] > sizes[1]) {
+ #   if (profiley && sizes[2] > sizes[1]) {
+    if (profiley) { # clock-wise rotation by 90 degrees
         sizes <- sizes[c(2, 1, 3)]
         increments <- increments[c(2, 1, 3)]
         

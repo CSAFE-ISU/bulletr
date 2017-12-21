@@ -11,6 +11,9 @@
 #' @export
 #' @import ggplot2
 get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust = 10, groove_cutoff = 400, mean_left = NULL, mean_right = NULL, mean_window = 100) {
+  if (method == "quadratic") {
+    grooves <- get_grooves_quadratic(bullet = bullet, adjust=adjust)
+  }
     if (method == "rollapply") {
       # make sure there is only one x 
       if (length(unique(bullet$x)) > 1) {
@@ -53,6 +56,27 @@ get_grooves_middle <- function(bullet, middle = 75) {
   return(list(groove = groove, plot = plot))
 }
 
+#' Quadratic fit to find groove locations
+#' 
+#' Use a robust fit of a quadratic curve to find groove locations
+#' @param bullet data frame with topological data in x-y-z format
+#' @param adjust positive number to adjust the grooves
+get_grooves_quadratic <- function(bullet, adjust) {
+  lm0 <- MASS::rlm(value~poly(y,2), data=bullet, maxit=100)
+  bullet$pred <- predict(lm0, newdata=bullet)
+
+  bullet$absresid <- with(bullet, abs(value-pred))
+  bullet$absresid90 <- with(
+    bullet, absresid>4*median(bullet$absresid, na.rm=TRUE))
+
+  groove <- range(filter(bullet, !absresid90)$y) + c(adjust, -adjust)
+  
+  plot <- bullet %>% ggplot(aes(x = y, y = value)) + geom_line(size = .5) + theme_bw() +
+    geom_vline(xintercept=groove[1], colour = "blue") +
+    geom_vline(xintercept=groove[2], colour = "blue") 
+  
+  return(list(groove = groove, plot = plot))
+}
 
 #' Using rollapply to find grooves in a crosscut
 #' 

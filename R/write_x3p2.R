@@ -102,7 +102,7 @@ write_x3p.default<- function(x, file, header.info= x$header.info, general.info=N
   # 'File structure'
   dir.create("x3pfolder")
   dir.create("x3pfolder/bindata")
-  
+
   # Change Working Dir 
   setwd(paste0(getwd(),"/x3pfolder"))
   new.wdpath<- getwd()
@@ -142,10 +142,11 @@ write_x3p.default<- function(x, file, header.info= x$header.info, general.info=N
   # Writing the md5checksum.hex with checksum for the main.xml
   main.chksum<- digest("main.xml", algo= "md5", serialize=FALSE, file=TRUE)
   write(main.chksum, "md5checksum.hex")
-  
+    
   # Write the x3p file and reset path
+  # create zipped file one level up, now get out and delete
+  zip(zipfile = paste0("../",file), files = dir())
   setwd("./..")
-  zip(zipfile = file, files = "x3pfolder")
   unlink("x3pfolder",recursive = TRUE)
   
   setwd(orig.path) 

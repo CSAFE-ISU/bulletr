@@ -4,6 +4,13 @@ write_x3p = function( x , ... )
   UseMethod( "write_x3p" )
 }
 
+#' internal helper function
+xml_set_text <- function(x, value) {
+  if (is.null(value) || length(value) == 0) 
+    value="N/A"
+  xml2::xml_set_text(x, value)
+}
+
 #' Write an x3p file taking Lists: general.info, feature.info, matrix.info and matrix: surface.matrix as inputs
 #' 
 #' @param x Surface Matrix with the x y z values to be written (variable type: matrix)

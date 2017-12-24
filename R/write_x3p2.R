@@ -121,6 +121,15 @@ write_x3p.default<- function(x, file, header.info= x$header.info, general.info=N
   increments<- c(feature.info$Axes$CX$Increment, feature.info$Axes$CY$Increment, feature.info$Axes$CZ$Increment)
   increments<- as.numeric(increments)
   
+  if (profiley) { #counter clock-wise rotation by 90 degrees
+    sizes <- sizes[c(2, 1, 3)]
+    increments <- increments[c(2, 1, 3)]
+    
+    #datamat <- t(datamat)
+    surface.matrix <- t(apply(surface.matrix, 2, rev))
+  }
+  
+  
   # Updating the list values
   matrix.info$MatrixDimension$SizeX<- as.character(sizes[1])
   matrix.info$MatrixDimension$SizeY<- as.character(sizes[2])
@@ -133,6 +142,7 @@ write_x3p.default<- function(x, file, header.info= x$header.info, general.info=N
   record3.assign(a1, matrix.info)
   record1.assign(a1, feature.info)
   
+
   # Writing the Surface Matrix as a Binary file
   writeBin(1e-6* as.vector((surface.matrix)), con = "bindata/data.bin")
   

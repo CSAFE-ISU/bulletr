@@ -60,7 +60,8 @@ read_dat <- function(path, profiley = TRUE, sample = 1) {
                    nrow = g1_num_obs_per_profile, 
                    ncol = g1_num_profiles, byrow = TRUE)
   
-  res <- list(header.info = g1_header.info,
+  res <- list(source.info = path,
+              header.info = g1_header.info,
               surface.matrix = g1_mat, 
               feature.info = NULL,
               general.info= NULL,

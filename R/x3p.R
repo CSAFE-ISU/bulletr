@@ -86,10 +86,10 @@ read_x3p <- function(path, profiley = TRUE, automatic = TRUE) {
 #' br411_fort <- fortify_x3p(br411)
 #' head(br411_fort)
 fortify_x3p <- function(x3p) {
-    info <- x3p[[1]]
+    info <- x3p$header.info
     
     df <- data.frame(expand.grid(x=1:info$num_profiles, y=1:info$num_obs_per_profile), 
-                     value=as.vector(t(x3p[[2]])))
+                     value=as.vector(t(x3p$surface.matrix)))
     df$x <- (df$x-1) * info$profile_inc
     df$y <- (df$y-1) * info$obs_inc
     

@@ -2,7 +2,7 @@
 % Please edit documentation in R/x3p.R
 \name{fortify_x3p}
 \alias{fortify_x3p}
-\title{Convert a list of x3p file into a data frame}
+\title{Convert an x3p file into a data frame}
 \usage{
 fortify_x3p(x3p)
 }

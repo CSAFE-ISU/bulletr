@@ -65,6 +65,7 @@ get_grooves_middle <- function(bullet, middle = 75) {
 #' @param bullet data frame with topological data in x-y-z format
 #' @param adjust positive number to adjust the grooves
 get_grooves_quadratic <- function(bullet, adjust) {
+  
   lm0 <- MASS::rlm(value~poly(y,2), data=bullet, maxit=100)
   bullet$pred <- predict(lm0, newdata=bullet)
 

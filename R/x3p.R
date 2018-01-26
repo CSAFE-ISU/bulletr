@@ -74,9 +74,9 @@ read_x3p <- function(path, profiley = TRUE, automatic = TRUE) {
 }
 
 
-#' Convert a list of x3p file into a data frame
+#' Convert an x3p file into a data frame
 #' 
-#' x3p format consists of a list with header info and a 2d matrix of scan depths. 
+#' old function - for previous ISO standard. x3p format consists of a list with header info and a 2d matrix of scan depths. 
 #' fortify_x3p turn the matrix into a variable within a data frame, using the parameters of the header as necessary.
 #' @param x3p a file in x3p format as return by function read_x3p
 #' @return data frame with variables x, y, and value
@@ -207,3 +207,29 @@ processBullets <- function(bullet, name = "", x = 100, grooves = NULL, span = 0.
 }
 
 
+#' Convert an x3p file into a data frame
+#' 
+#' An x3p file consists of a list with header info and a 2d matrix with scan depths. 
+#' fortify turns the matrix into a data frame, using the parameters of the header as necessary.
+#' @param x3p a file in x3p format as returned by function read_x3p
+#' @return data frame with variables x, y, and value
+#' @export
+#' @examples 
+#' data(br411)
+#' br411_fort <- fortify(br411)
+#' head(br411_fort)
+fortify <- function(x3p) {
+  info <- x3p$header.info
+  
+  df <- data.frame(expand.grid(
+    x=1:info$num_obs_per_profile,
+    y=info$num_profiles:1), 
+    value=as.vector(x3p$surface.matrix))
+  df$y <- (df$y-1) * info$obs_inc
+  df$x <- (df$x-1) * info$profile_inc
+  
+  attr(df, "info") <- info
+  
+  df
+}
+  

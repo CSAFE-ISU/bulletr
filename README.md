@@ -1,50 +1,124 @@
-# bulletr
+---
+title: "bulletr"
+author: "Eric Hare, Heike Hofmann, Ganesh Krishnan"
+date: "January 19, 2018"
+output: 
+  html_document:
+    keep_md: true
+---
+
+
 Analyze bullet striations using nonparametric methods
 
 [![CRAN Status](http://www.r-pkg.org/badges/version/bulletr)](https://cran.r-project.org/package=bulletr) [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/bulletr)](http://www.r-pkg.org/pkg/bulletr) 
 
 <!--[![Travis-CI Build Status](https://travis-ci.org/haleyjeppson/ggmosaic.svg?branch=master)](https://travis-ci.org/haleyjeppson/ggmosaic)-->
 
+# Comparing two lands
 
 ## HOW-TO
 
 1. Load Libraries
     
-    ```
+
+```r
     library(dplyr)
-    library(readr)
+```
+
+```
+## 
+## Attaching package: 'dplyr'
+```
+
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
     library(bulletr)
     library(randomForest)
-    ```
+```
+
+```
+## randomForest 4.6-12
+```
+
+```
+## Type rfNews() to see new features/changes/bug fixes.
+```
+
+```
+## 
+## Attaching package: 'randomForest'
+```
+
+```
+## The following object is masked from 'package:dplyr':
+## 
+##     combine
+```
   
 2. Read in the bullet file data, and convert to the appropriate x3p format (if necessary):
 
-    ```
-    h44_g1 <- read_dat("~/Downloads/H44-G-1.dat")
-    h44_gx1 <- read_dat("~/Downloads/H44-GX-1.dat")
-    ```
 
+```r
+    h44_g1 <- read_dat("~/Downloads/H44-G-1.dat", profiley=FALSE)
+```
+
+```
+## Parsed with column specification:
+## cols(
+##   x = col_double(),
+##   y = col_double(),
+##   value = col_character()
+## )
+```
+
+```r
+    h44_gx1 <- read_dat("~/Downloads/H44-G-2.dat", profiley = FALSE)
+```
+
+```
+## Parsed with column specification:
+## cols(
+##   x = col_double(),
+##   y = col_double(),
+##   value = col_character()
+## )
+```
+    
 3. Get the ideal cross sections
 
 
-    ```
+
+```r
     cc_g1 <- bulletCheckCrossCut(path = "~/Downloads/H44-G-1.dat", bullet = h44_g1)
     cc_gx1 <- bulletCheckCrossCut(path = "~/Downloads/H44-GX-1.dat", bullet = h44_gx1)
 
     ccdata_g1 <- get_crosscut(bullet = h44_g1, x = cc_g1) 
     ccdata_gx1 <- get_crosscut(bullet = h44_gx1, x = cc_gx1)
-    ```
+```
     
 4. Get the groove locations
 
-    ```
+
+```r
     grooves_g1 <- get_grooves(bullet = ccdata_g1)
     grooves_gx1 <- get_grooves(bullet = ccdata_gx1)
-    ```
+```
     
 6. Process the bullets to extract LOESS residuals
 
-    ```
+
+```r
     g1_processed <- processBullets(bullet = ccdata_g1,
                                name = "g1",
                                x = ccdata_g1$x[1],
@@ -56,29 +130,32 @@ Analyze bullet striations using nonparametric methods
                                    x = ccdata_gx1$x[1],
                                    span = 0.75,
                                    grooves = grooves_gx1$groove)
-    ```
+```
     
 7. Smooth the processed bullet profiles
 
-    ```
+
+```r
     all_smoothed <- g1_processed %>% 
         rbind(gx1_processed) %>%
         bulletSmooth(span = 0.03) %>%
         filter(!is.na(l30))
-    ```
+```
    
 8. Detect peaks and valleys in the aligned signatures
 
-    ```
+
+```r
     res <- bulletGetMaxCMS(filter(all_smoothed, bullet == "g1"), 
                            filter(all_smoothed, bullet == "gx1"), 
                            column = "l30", 
                            span = 25)
-    ```
+```
     
 9. Extract Features
 
-    ```
+
+```r
     lofX <- res$bullets
     b12 <- unique(lofX$bullet)
 
@@ -139,11 +216,17 @@ Analyze bullet striations using nonparametric methods
       dplyr::select(profile1_id = b1, profile2_id = b2, ccf, rough_cor, lag, D, sd_D, signature_length, overlap,
                     matches, mismatches, cms, non_cms, sum_peaks)
     ccf[,-2] <- lapply(ccf[,-(1:2)], function(x) { as.numeric(as.character(x)) })
-    ```
+```
     
 10. Get Predicted Probability of Match
 
-    ```
-    ccf$forest <- predict(rtrees, newdata = CCFs_withlands, type = "prob")[,2]
-    ```
+
+```r
+    ccf$forest <- predict(rtrees, newdata = ccf, type = "prob")[,2]
+ccf$forest
+```
+
+```
+## [1] 0.6933333
+```
     

@@ -98,7 +98,7 @@ write_x3p.default<- function(x, file, header.info= x$header.info, general.info=N
     xml_set_text(xml_child(a1, search = "Record3/MatrixDimension/SizeX"), as.character(record3.data$MatrixDimension$SizeX) )
     xml_set_text(xml_child(a1, search = "Record3/MatrixDimension/SizeY"), as.character(record3.data$MatrixDimension$SizeY) )
     xml_set_text(xml_child(a1, search = "Record3/MatrixDimension/SizeZ"), as.character(record3.data$MatrixDimension$SizeZ) )
-    xml_set_text(xml_child(a1, search = "Record3/DataLink/PointDataLink"), "bindat/data.bin")
+    xml_set_text(xml_child(a1, search = "Record3/DataLink/PointDataLink"), "bindata/data.bin")
   }
   # Storing the Working Dir path
   orig.path<- getwd()

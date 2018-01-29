@@ -6,7 +6,7 @@
 \usage{
 get_grooves_rollapply(bullet, smoothfactor = 15, adjust = 10,
   groove_cutoff = 400, mean_left = NULL, mean_right = NULL,
-  mean_window = 100)
+  mean_window = 100, second_smooth = T, which_fun = mean)
 }
 \arguments{
 \item{bullet}{data frame with topological data in x-y-z format}
@@ -22,6 +22,10 @@ get_grooves_rollapply(bullet, smoothfactor = 15, adjust = 10,
 \item{mean_right}{If provided, the location of the average right groove}
 
 \item{mean_window}{The window around the means to use}
+
+\item{second_smooth}{Whether or not to smooth a second time}
+
+\item{which_fun}{Which function to use in the rollapply statement}
 }
 \description{
 Using rollapply to find grooves in a crosscut

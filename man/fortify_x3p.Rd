@@ -13,7 +13,7 @@ fortify_x3p(x3p)
 data frame with variables x, y, and value
 }
 \description{
-x3p format consists of a list with header info and a 2d matrix of scan depths. 
+old function - for previous ISO standard. x3p format consists of a list with header info and a 2d matrix of scan depths. 
 fortify_x3p turn the matrix into a variable within a data frame, using the parameters of the header as necessary.
 }
 \examples{

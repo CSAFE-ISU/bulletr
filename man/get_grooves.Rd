@@ -24,6 +24,8 @@ get_grooves(bullet, method = "rollapply", smoothfactor = 15, adjust = 10,
 \item{mean_right}{If provided, the location of the average right groove}
 
 \item{mean_window}{The window around the means to use}
+
+\item{second_smooth}{Whether or not to smooth a second time}
 }
 \description{
 Find the grooves of a bullet land

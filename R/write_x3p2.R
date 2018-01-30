@@ -34,22 +34,29 @@ xml_set_text <- function(x, value) {
 #'  write_x3p(surface.matrix=surface.matrix, file="out.x3p", profiley = FALSE)
 #'  
 #' }
-write_x3p.default<- function(x, file, header.info= x$header.info, general.info=NULL, feature.info=NULL, matrix.info=NULL,  profiley= TRUE, template=system.file("templateXML.xml", package="bulletr"))
+write_x3p.default<- function(x, file, header.info= x$header.info, general.info=x$general.info, feature.info=x$feature.info, matrix.info=NULL,  profiley= TRUE, template=NULL)
 {
-  browser()
   surface.matrix <- x
+  
+  
+  if (!is.null(template)) {  # Retrieving the Template XML file
+    a1<- xml2::read_xml(template) 
+  } else {
+    a1 <- xml2::read_xml(system.file("templateXML.xml", package="bulletr"))
+  }
+  
   if (is.null(general.info)) {
     cat("general info not specified, using template\n")
-    general.info = internal$Record2
+    general.info = as_list(xml_child(a1, search = "Record2"))
   }
   if (is.null(feature.info)) {
     cat("feature info not specified, using template\n")
-    feature.info = internal$Record1
+    feature.info = as_list(xml_child(a1, search = "Record1"))
 
   }
   if (is.null(matrix.info)) {
     cat("matrix info not specified, using template\n")
-    matrix.info = internal$Record3
+    matrix.info = as_list(xml_child(a1, search = "Record3"))
 
   }
   
@@ -104,9 +111,6 @@ write_x3p.default<- function(x, file, header.info= x$header.info, general.info=N
   }
   # Storing the Working Dir path
   orig.path<- getwd()
-  # Retrieving the Template XML file
-  #data(template_writex3p, envir=environment())
-  a1<- xml2::read_xml(template) # gets messed up if it's stored as R object
   # Creating Temp directory and bin directory
   # 'File structure'
   dir.create("x3pfolder")
@@ -116,7 +120,7 @@ write_x3p.default<- function(x, file, header.info= x$header.info, general.info=N
   setwd(paste0(getwd(),"/x3pfolder"))
   new.wdpath<- getwd()
   # Assigning values to the Record 1 part of the XML
-#  record2.assign(a1, general.info)
+  record2.assign(a1, general.info)
   
   sizes<- c(matrix.info$MatrixDimension$SizeX, matrix.info$MatrixDimension$SizeY, matrix.info$MatrixDimension$SizeZ)
   sizes<- as.numeric(sizes)

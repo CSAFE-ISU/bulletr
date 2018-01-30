@@ -20,6 +20,7 @@ xml_set_text <- function(x, value) {
 #' @param feature.info Setting the Values for the XML to a list
 #' @param matrix.info Setting the Values for the XML to a list
 #' @param profiley If FALSE, reorient the matrix to ensure a profile is taken is consistent with surface.matrix (input variable). The default value of Profiley is TRUE
+#' @param template path to an xml file with meta information to be saved as part of the x3p file.
 #' 
 #' @export
 #' @import xml2
@@ -33,8 +34,9 @@ xml_set_text <- function(x, value) {
 #'  write_x3p(surface.matrix=surface.matrix, file="out.x3p", profiley = FALSE)
 #'  
 #' }
-write_x3p.default<- function(x, file, header.info= x$header.info, general.info=NULL, feature.info=NULL, matrix.info=NULL,  profiley= TRUE)
+write_x3p.default<- function(x, file, header.info= x$header.info, general.info=NULL, feature.info=NULL, matrix.info=NULL,  profiley= TRUE, template=system.file("templateXML.xml", package="bulletr"))
 {
+  browser()
   surface.matrix <- x
   if (is.null(general.info)) {
     cat("general info not specified, using template\n")
@@ -104,7 +106,7 @@ write_x3p.default<- function(x, file, header.info= x$header.info, general.info=N
   orig.path<- getwd()
   # Retrieving the Template XML file
   #data(template_writex3p, envir=environment())
-  a1<- xml2::read_xml(paste0(find.package("bulletr", lib.loc=NULL, quiet = TRUE), "/templateXML.xml")) # gets messed up if it's stored as R object
+  a1<- xml2::read_xml(template) # gets messed up if it's stored as R object
   # Creating Temp directory and bin directory
   # 'File structure'
   dir.create("x3pfolder")
@@ -114,7 +116,7 @@ write_x3p.default<- function(x, file, header.info= x$header.info, general.info=N
   setwd(paste0(getwd(),"/x3pfolder"))
   new.wdpath<- getwd()
   # Assigning values to the Record 1 part of the XML
-  record2.assign(a1, general.info)
+#  record2.assign(a1, general.info)
   
   sizes<- c(matrix.info$MatrixDimension$SizeX, matrix.info$MatrixDimension$SizeY, matrix.info$MatrixDimension$SizeZ)
   sizes<- as.numeric(sizes)
@@ -176,6 +178,7 @@ write_x3p.default<- function(x, file, header.info= x$header.info, general.info=N
 #' @param x x3pobject
 #' @param file where should the file be stored?
 #' @param profiley If FALSE, reorient the matrix to ensure a profile is taken is consistent with surface.matrix (input variable). The default value of Profiley is TRUE
+#' @param template path to xml file with meta information
 #' 
 #' @export
 #' @import xml2
@@ -189,8 +192,8 @@ write_x3p.default<- function(x, file, header.info= x$header.info, general.info=N
 #'  write_x3p(surface.matrix=surface.matrix, file="out.x3p", profiley = FALSE)
 #'  
 #' }
-write_x3p.x3p<- function(x, file, profiley= TRUE) {
+write_x3p.x3p<- function(x, file, profiley= TRUE, template=system.file("templateXML.xml", package="bulletr")) {
   write_x3p(x = x$surface.matrix, header.info= x$header.info, general.info=x$general.info, feature.info = x$feature.info,
-            matrix.info = x$matrix.info, file=file, profiley=profiley)
+            matrix.info = x$matrix.info, file=file, profiley=profiley, template=template)
 }
   

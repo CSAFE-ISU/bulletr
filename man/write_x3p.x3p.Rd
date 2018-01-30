@@ -4,7 +4,8 @@
 \alias{write_x3p.x3p}
 \title{Write an x3p file taking Lists: general.info, feature.info, matrix.info and matrix: surface.matrix as inputs}
 \usage{
-\method{write_x3p}{x3p}(x, file, profiley = TRUE)
+\method{write_x3p}{x3p}(x, file, profiley = TRUE,
+  template = system.file("templateXML.xml", package = "bulletr"))
 }
 \arguments{
 \item{x}{x3pobject}
@@ -12,6 +13,8 @@
 \item{file}{where should the file be stored?}
 
 \item{profiley}{If FALSE, reorient the matrix to ensure a profile is taken is consistent with surface.matrix (input variable). The default value of Profiley is TRUE}
+
+\item{template}{path to xml file with meta information}
 }
 \description{
 Write an x3p file taking Lists: general.info, feature.info, matrix.info and matrix: surface.matrix as inputs

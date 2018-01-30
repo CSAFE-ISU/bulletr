@@ -6,7 +6,8 @@
 \usage{
 \method{write_x3p}{default}(x, file, header.info = x$header.info,
   general.info = NULL, feature.info = NULL, matrix.info = NULL,
-  profiley = TRUE)
+  profiley = TRUE, template = system.file("templateXML.xml", package =
+  "bulletr"))
 }
 \arguments{
 \item{x}{Surface Matrix with the x y z values to be written (variable type: matrix)}
@@ -22,6 +23,8 @@
 \item{matrix.info}{Setting the Values for the XML to a list}
 
 \item{profiley}{If FALSE, reorient the matrix to ensure a profile is taken is consistent with surface.matrix (input variable). The default value of Profiley is TRUE}
+
+\item{template}{path to an xml file with meta information to be saved as part of the x3p file.}
 }
 \description{
 Write an x3p file taking Lists: general.info, feature.info, matrix.info and matrix: surface.matrix as inputs

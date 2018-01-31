@@ -5,9 +5,8 @@
 \title{Write an x3p file taking Lists: general.info, feature.info, matrix.info and matrix: surface.matrix as inputs}
 \usage{
 \method{write_x3p}{default}(x, file, header.info = x$header.info,
-  general.info = NULL, feature.info = NULL, matrix.info = NULL,
-  profiley = TRUE, template = system.file("templateXML.xml", package =
-  "bulletr"))
+  general.info = x$general.info, feature.info = x$feature.info,
+  matrix.info = NULL, profiley = TRUE, template = NULL)
 }
 \arguments{
 \item{x}{Surface Matrix with the x y z values to be written (variable type: matrix)}

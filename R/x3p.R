@@ -64,6 +64,8 @@ read_x3p <- function(path, profiley = TRUE, automatic = TRUE) {
     
     #plot_ly(z = ~datamat) %>% add_surface()
     input.info<- as_list(bullet_info)
+    # xml2 version update
+    input.info<- input.info[[1]]
     res <- list(header.info = bullet_metadata,
                 surface.matrix = datamat, 
                 feature.info = input.info$Record1,

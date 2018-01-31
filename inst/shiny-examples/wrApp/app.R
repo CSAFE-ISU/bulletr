@@ -60,8 +60,8 @@ ui1<- shinyUI(pageWithSidebar (
       helpText("Please wait for the Loading complete sign to apear before prooceeding"),
       helpText("Note: Houston data sets have Profile = FALSE",
                "while Phoenix data sets have Profile = TRUE"),
-      actionButton("write", "Write File"),
-      actionButton("save_template", "Save Fields as Template")
+      actionButton("write", "Write File")#,
+      #actionButton("save_template", "Save Fields as Template")
     ),# bracket for conditional section
     conditionalPanel( 
       condition = "input.mode == 'batch'",

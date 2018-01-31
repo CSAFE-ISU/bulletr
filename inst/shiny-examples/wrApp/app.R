@@ -7,8 +7,9 @@ library(shinyjs)
 library(lubridate)
 library(utils)
 library(tidyverse)
+
 # When the app is Standalone not used from within the package
-# setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+# app location : setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 # appdir<-getwd()
 
 appdir<-getwd()#system.file("shiny-examples", "wR-app", package = "bulletr")
@@ -23,8 +24,6 @@ jsResetCode <- "shinyjs.reset = function() {history.go(0)}"
 ui1<- shinyUI(pageWithSidebar (
   headerPanel( "wrApp- Write & Read dat/x3p fies"),
   sidebarPanel(
-    #numericInput("assets", label = "Enter Number of variants in Experiment", value="3")
-    
     radioButtons("mode", "Select Write mode", c("Single file" = "singfile",
                                                 "Batch" = "batch")),
     
@@ -42,19 +41,10 @@ ui1<- shinyUI(pageWithSidebar (
         #tags$head(tags$script(src = "message-handler.js")),
         actionButton("getTemplate", "Choose Template")
       ),
-      # conditionalPanel(
-      # condition = "input.ftype == 'datftype'",
-      # #selectInput("templatef", "DAT format",
-      # #           c("DAT Info from Template" = "usetemplate_dat"))
-      # actionButton("getTemplate", "Choose Template")
-      # ),
+
       checkboxInput("profiley", "Do you need Profile Adjustment? Check for Yes"),
-      #selectInput("changeinfo", "Do you wish to Change any information?", c("No, Keep the defaults", "Yes, I want to make changes")),
-      # conditionalPanel(
-      #   condition = "input.templatef == 'notemplate'",
       selectInput("information", "View/Edit Information",
                   c("Header Info (Automatic)" = "headInfo","General Information" = "genInfo", "Feature Information" = "featInfo", "Matrix Information" = "matInfo")),
-      #),
       actionButton("fileget", "Browse"),
       textOutput("text1"),
       helpText("Please wait for the Loading complete sign to apear before prooceeding"),
@@ -65,9 +55,6 @@ ui1<- shinyUI(pageWithSidebar (
     ),# bracket for conditional section
     conditionalPanel( 
       condition = "input.mode == 'batch'",
-      # conditionalPanel(
-      #   condition = "input.parse == 'parsetext'",
-      # )
       selectInput("parse", "Choose Meta-Data Source",
                   c("Parse Meta-data from file name" = "parsetext","Use Template for Batch" = "batchtemplate")),
       checkboxInput("batchrecursive", "Do you want to convert Dat files for all subfolders?"),
@@ -83,11 +70,6 @@ ui1<- shinyUI(pageWithSidebar (
     actionButton("reset_button", "Reset Page")
   ),
   mainPanel(
-    
-    # htmlOutput("text3"),
-    # uiOutput("finfo.default"),
-    # uiOutput("ginfo.default"),
-    # uiOutput("minfo.default")
     # Setting up the text boxes in the main panel for the form layout
     conditionalPanel(
       condition = "input.information == 'headInfo'",
@@ -113,27 +95,12 @@ ui1<- shinyUI(pageWithSidebar (
   
 ))
 
-# # Setting defaults for template comes in handy
-# input.info<- as_list(a121)
-# qwe<- as_xml_document(list(structure(list(input.info ))))
-# qwe<- as_xml_document(list("ISO5436_2"= list(structure(list(input.info)))))
-# xml_attrs(qwe)<- xml_attrs(a121)
-# 
-# # Unlist and build list again
-# mylist <- list(a = 1, b = list(A = 1, B = 2), c = list(C = 1, D = 3))
-# tmp <- as.relistable(mylist)
-# tmp <- unlist(tmp)
-# tmp[grep("(^|.)C$",names(tmp))] <- 5 # 5 is the length of the unlisted list
-# tmp <- relist(tmp)
-# 
-# # value from the text inputs
-# paste0(unlist(input.info$Record3)[[i]])
+
 tmp1<- NULL
 tmp2<- NULL
 tmp3<- NULL
 
 s1<- shinyServer( function(input, output, session) {
-  # template_path <<- "empty"
   field.not.generated <- function(x){
     if((length(x) == 0) || is.null(x[[1]])) 
       return(TRUE) 
@@ -146,19 +113,12 @@ s1<- shinyServer( function(input, output, session) {
     
     if(tryCatch(field.not.generated(template_path), error = function(e) return(FALSE))){
       a121<<- xml2::read_xml("./defaultTemplateXML.xml")
-      #winDialog(type = "ok", message = "Custom template not chosen. Using Default template")#, default= "")
-      #showNotification("This is a notification.", duration = NULL, type = "warning")
-      #session$sendCustomMessage(type = 'testmessage',
-      #                          message = 'Custom template not chosen. Using Default template')
-      
       showModal(modalDialog(title = "Important message",
                             "Custom template not chosen. Using Meta-Data from Default template",
                             easyClose = TRUE
       ))
       showNotification("Default Template Loaded", duration = 5, type = "message")
       custom.template<<- FALSE
-      #input.info<<- as_list(a121)
-      #backup.template<- as_list(a121)  
     }else{
       a121<<- xml2::read_xml(template_path)
       custom.template<<- TRUE
@@ -178,22 +138,14 @@ s1<- shinyServer( function(input, output, session) {
     }
   })
   
-  # observeEvent(input$x3pftype, {
-  #   if(input$templatef == 'notemplate'){
-  #     a126<<- xml2::read_xml("./defaultTemplateXML.xml")
-  #     input.info<<- as_list(a126)
-  #     # New things after change in the as_list definition
-  #     input.info<<- input.info[[1]]
-  #   }
-  # })
-  
+
   file1name<- reactiveValues()
   cdat<- reactiveValues()
   cx3p<- reactiveValues()
   fpth<- reactiveValues()
   #ft<- reactiveValues()
   data2<- NULL#reactiveValues() 
-  #persistent_data<- reactiveValues() 
+ 
   
   loadData <- function(name, file1, profiley) {
     if(substrRight(name,3)[1] == "dat"){
@@ -211,18 +163,6 @@ s1<- shinyServer( function(input, output, session) {
     substr(x, nchar(x)-n+1, nchar(x))
   }
   
-  # autoupdate_from_header<- function(data2,file1name){    
-  #   output$text2 <- renderText({
-  #     paste0("Current Sytem Time = ",as.character(Sys.time()))
-  #   })
-  #   output$text4 <- renderText({
-  #     as.character(substrRight(file1name,3))
-  #   })
-  #   
-  #   # Show the Header Info, Profile etc which is Automatically detected on reading a file
-  #  }
-  
-  
   observeEvent(input$fileget, {
     
     # File Path
@@ -237,26 +177,11 @@ s1<- shinyServer( function(input, output, session) {
     
     
     if(tryCatch(field.not.generated(pt), error = function(e) return(FALSE))){
-      # if((input$fileget >=2)){
-      #   if((!tryCatch(field.not.generated(data2), error = function(e) return(FALSE)))){ #actually evaluates on error to !FALSE
-      #     showModal(modalDialog(title = "Important message",
-      #                           "A file has been already read in, Cannot read another file,
-      #                           please reset app.",
-      #                           easyClose = TRUE
-      #     ))   
-      #   } else{
-      #     showModal(modalDialog(title = "Important message",
-      #                           "You did Not Choose a File, Please Try Again",
-      #                           easyClose = TRUE
-      #     ))
-      #   }
-      #   
-      # }else{
       showModal(modalDialog(title = "Important message",
                             "You did Not Choose a File, Please Try Again",
                             easyClose = TRUE
       ))
-      # }
+
     }else {
       
       
@@ -351,10 +276,6 @@ s1<- shinyServer( function(input, output, session) {
         str5 <- paste0("Profiley = ", as.character(input$profiley))
         str6 <- paste0("Creator as Read in from file = ", as.character(data2$general.info$Creator))
         str7 <- paste0( as.character(print.tinf))
-        # str7 <- paste0( info_len1, "Automatically generated fields  of Feature type info for Updation/verification")
-        # str8 <- paste0( info_len2, "Automatically generated fields of General Info for Updation/verification")
-        # str9 <- paste0(info_len3, "Automatically generated fields of Matrix Info for Updation/verification")
-        # HTML(paste(str1, str2, str3, str4, str5, str6, str7, str8, str9, sep = '<br/>'))
         HTML(paste(str1, str2, str3, str4, str5, str6, str7, sep = '<br/>'))
       })
       
@@ -442,36 +363,9 @@ s1<- shinyServer( function(input, output, session) {
     fileName <- sprintf("%s_%s-%s-%s_%s.x3p", date(Sys.time()), paste0(hour(Sys.time())), paste0(minute(Sys.time())), paste0(ceiling(second(Sys.time()))), as.character(strsplit(file1name, '.', fixed = TRUE)[[1]][1]))
     setwd(dirname(fpth))
     write_x3p(form(), fileName, profiley = input$profiley)
-    #write_x3p(data2, fileName)
-    # write_x3p(x = data2$surface.matrix, file = fileName,
-    #           general.info = data2$general.info,
-    #           feature.info = data2$feature.info,
-    #           matrix.info = data2$matrix.info, profiley = input$profiley)
     setwd(appdir)
     
-    # }
-    # 
-    
-    # if(input$mode == 'batch'){
-    #   form()$surface.matrix<- 
-    #   
-    #   count<- isolate(ft$a)
-    #   #breact<-reactive({
-    #   lapply(X = 1:count, FUN = function(i){batch.write(i)})
-    #   #})
-    # }
-    
     output$text5 <- renderText({
-      #paste0(names(persistent_data()$matrix.info))#, "  ", names(matrix_form()))
-      #paste0(unlist(data2$general.info))
-      #paste0(unlist(data2$feature.info))
-      #paste0(fpth)
-      # paste0(dim(data2$surface.matrix))
-      # paste0(names(data2$general.info))#, "  ", names(matrix_form()))
-      #as.character(input$as.name(paste0(names(unlist(tmp1))[i])))
-      #paste0(
-      #if(input$featInfo == 1) paste0("TRUE") else(paste0("FALSE"))
-      #paste0(sapply(form()$feature.info, is.na))#, "   ", sum(sapply(form()$general.info, is.null)))
       "All files converted"
     })
     
@@ -483,20 +377,13 @@ s1<- shinyServer( function(input, output, session) {
   ################################################################################
   ##################################Batch#########################################
   ################################################################################
-  # if(input$mode == 'batch'){
-  #   
-  # }
+
   observeEvent(input$choosebatchtemplate,{
     
     template_path<<- tryCatch({choose.files(default= "", "Select Template")},error = function(e) {})
     
     if(tryCatch(field.not.generated(template_path), error = function(e) return(FALSE))){
       a121<<- xml2::read_xml("./defaultTemplateXML.xml")
-      #winDialog(type = "ok", message = "Custom template not chosen. Using Default template")#, default= "")
-      #showNotification("This is a notification.", duration = NULL, type = "warning")
-      #session$sendCustomMessage(type = 'testmessage',
-      #                          message = 'Custom template not chosen. Using Default template')
-      
       showModal(modalDialog(title = "Important message",
                             "Custom template not chosen. Using Meta-Data from Default template",
                             easyClose = TRUE
@@ -619,12 +506,7 @@ s1<- shinyServer( function(input, output, session) {
       }) # Form closed  
       
       data2<<- isolate(form())
-      # 
-      # input.info$Record2<<- isolate(form()$general.info)
-      # input.info$Record1<<- isolate(form()$feature.info)
-      
-      
-      
+
     }# if input$parse = batchtemplate closed
     
     output$text3batch <- renderUI({
@@ -647,9 +529,7 @@ s1<- shinyServer( function(input, output, session) {
   
   
   observeEvent(input$folderbatchget, {
-    
-    
-    
+  
     if(input$batchrecursive){
       pt<-list.dirs(choose.dir(default= "", "Select RecursiveFolder"), recursive=TRUE)
     }else{
@@ -696,33 +576,23 @@ s1<- shinyServer( function(input, output, session) {
     })
   })
   
-  # })
-  
-  
-  
-  
-  
-  
-  
-  #   
-  # fileName <- sprintf("%s_%s-%s-%s_%s.x3p", date(Sys.time()), paste0(hour(Sys.time())), paste0(minute(Sys.time())), paste0(ceiling(second(Sys.time()))), as.character(strsplit(file1name, '.', fixed = TRUE)[[1]][1]))
-  # setwd(dirname(fpth))
-  # write_x3p(form(), fileName, profiley = input$profiley)
-  # setwd(appdir)
-  # 
-  # 
-  # output$text5 <- renderText({
-  #        "All files converted"
-  # })
-  
-  
-  # })
-  
 }) #end of shinyServer
 
 
 shinyApp(ui1, s1)
 
 
+# # Setting defaults for template comes in handy
+# input.info<- as_list(a121)
+# qwe<- as_xml_document(list(structure(list(input.info ))))
+# qwe<- as_xml_document(list("ISO5436_2"= list(structure(list(input.info)))))
+# xml_attrs(qwe)<- xml_attrs(a121)
+# 
+# # Unlist and build list again
+# mylist <- list(a = 1, b = list(A = 1, B = 2), c = list(C = 1, D = 3))
+# tmp <- as.relistable(mylist)
+# tmp <- unlist(tmp)
+# tmp[grep("(^|.)C$",names(tmp))] <- 5 # 5 is the length of the unlisted list
+# tmp <- relist(tmp)
 
 

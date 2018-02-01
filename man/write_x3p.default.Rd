@@ -32,6 +32,6 @@ Write an x3p file taking Lists: general.info, feature.info, matrix.info and matr
 \dontrun{
  # use all defaults:
  write_x3p(surface.matrix=surface.matrix, file="out.x3p", profiley = FALSE)
- 
+
 }
 }

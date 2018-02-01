@@ -6,13 +6,13 @@ write_x3p = function( x , ... )
 
 #' internal helper function
 xml_set_text <- function(x, value) {
-  if (is.null(value) || length(value) == 0) 
+  if (is.null(value) || length(value) == 0)
     value="N/A"
   xml2::xml_set_text(x, value)
 }
 
 #' Write an x3p file taking Lists: general.info, feature.info, matrix.info and matrix: surface.matrix as inputs
-#' 
+#'
 #' @param x Surface Matrix with the x y z values to be written (variable type: matrix)
 #' @param file where should the file be stored?
 #' @param header.info header info of x3p
@@ -21,30 +21,30 @@ xml_set_text <- function(x, value) {
 #' @param matrix.info Setting the Values for the XML to a list
 #' @param profiley If FALSE, reorient the matrix to ensure a profile is taken is consistent with surface.matrix (input variable). The default value of Profiley is TRUE
 #' @param template path to an xml file with meta information to be saved as part of the x3p file.
-#' 
+#'
 #' @export
 #' @import xml2
 #' @importFrom utils zip
 #' @importFrom digest digest
 #' @method write_x3p default
-#' 
+#'
 #' @examples
 #' \dontrun{
 #'  # use all defaults:
 #'  write_x3p(surface.matrix=surface.matrix, file="out.x3p", profiley = FALSE)
-#'  
+#'
 #' }
 write_x3p.default<- function(x, file, header.info= x$header.info, general.info=x$general.info, feature.info=x$feature.info, matrix.info=NULL,  profiley= TRUE, template=NULL)
 {
   surface.matrix <- x
-  
-  
+
+
   if (!is.null(template)) {  # Retrieving the Template XML file
-    a1<- xml2::read_xml(template) 
+    a1<- xml2::read_xml(template)
   } else {
     a1 <- xml2::read_xml(system.file("templateXML.xml", package="bulletr"))
   }
-  
+
   if (is.null(general.info)) {
     cat("general info not specified, using template\n")
     general.info = as_list(xml_child(a1, search = "Record2"))
@@ -59,16 +59,16 @@ write_x3p.default<- function(x, file, header.info= x$header.info, general.info=x
     matrix.info = as_list(xml_child(a1, search = "Record3"))
 
   }
-  
+
   feature.info$Axes$CX$Increment = header.info$obs_inc
   feature.info$Axes$CY$Increment = header.info$profile_inc
-  
+
   matrix.info$MatrixDimension$SizeX = header.info$num_obs_per_profile
   matrix.info$MatrixDimension$SizeY = header.info$num_profiles
-  
+
   # Function to assign values to the Record 2 in the main.XML
   record2.assign<- function(a1, record2.data){
-    
+
     xml_set_text(xml_child(a1, search = "Record2/Date"), as.character(record2.data$Date) )
     xml_set_text(xml_child(a1, search = "Record2/Creator"), as.character(record2.data$Creator) )
     xml_set_text(xml_child(a1, search = "Record2/Instrument/Manufacturer"), as.character(record2.data$Instrument$Manufacturer) )
@@ -79,12 +79,12 @@ write_x3p.default<- function(x, file, header.info= x$header.info, general.info=x
     xml_set_text(xml_child(a1, search = "Record2/ProbingSystem/Type"), as.character(record2.data$ProbingSystem$Type))
     xml_set_text(xml_child(a1, search = "Record2/ProbingSystem/Identification"), as.character(record2.data$ProbingSystem$Identification))
     xml_set_text(xml_child(a1, search = "Record2/Comment"), as.character(record2.data$Comment))
-    
+
   }
-  
+
   # Function to assign values to the Record 1 in the main.XML
   record1.assign<- function(a1, record1.data){
-    
+
     xml_set_text(xml_child(a1, search = "Record1/Revision"), as.character(record1.data$Revision) )
     xml_set_text(xml_child(a1, search = "Record1/FeatureType"), as.character(record1.data$FeatureType) )
     xml_set_text(xml_child(a1, search = "Record1/Axes/CX/AxisType"), as.character(record1.data$Axes$CX$AxisType) )
@@ -100,10 +100,10 @@ write_x3p.default<- function(x, file, header.info= x$header.info, general.info=x
     xml_set_text(xml_child(a1, search = "Record1/Axes/CZ/Increment"), as.character(record1.data$Axes$CZ$Increment) )
     xml_set_text(xml_child(a1, search = "Record1/Axes/CZ/Offset"), as.character(record1.data$Axes$CZ$Offset) )
   }
-  
+
   # Function to assign values to the Record 3 in the main.XML
   record3.assign<- function(a1, record3.data){
-    
+
     xml_set_text(xml_child(a1, search = "Record3/MatrixDimension/SizeX"), as.character(record3.data$MatrixDimension$SizeX) )
     xml_set_text(xml_child(a1, search = "Record3/MatrixDimension/SizeY"), as.character(record3.data$MatrixDimension$SizeY) )
     xml_set_text(xml_child(a1, search = "Record3/MatrixDimension/SizeZ"), as.character(record3.data$MatrixDimension$SizeZ) )
@@ -116,26 +116,26 @@ write_x3p.default<- function(x, file, header.info= x$header.info, general.info=x
   dir.create("x3pfolder")
   dir.create("x3pfolder/bindata")
 
-  # Change Working Dir 
+  # Change Working Dir
   setwd(paste0(getwd(),"/x3pfolder"))
   new.wdpath<- getwd()
   # Assigning values to the Record 1 part of the XML
   record2.assign(a1, general.info)
-  
+
   sizes<- c(matrix.info$MatrixDimension$SizeX, matrix.info$MatrixDimension$SizeY, matrix.info$MatrixDimension$SizeZ)
   sizes<- as.numeric(sizes)
   increments<- c(feature.info$Axes$CX$Increment, feature.info$Axes$CY$Increment, feature.info$Axes$CZ$Increment)
   increments<- as.numeric(increments)
-  
+
   if (profiley) { #counter clock-wise rotation by 90 degrees
     sizes <- sizes[c(2, 1, 3)]
     increments <- increments[c(2, 1, 3)]
-    
+
     #datamat <- t(datamat)
     surface.matrix <- t(apply(surface.matrix, 2, rev))
   }
-  
-  
+
+
   # Updating the list values
   matrix.info$MatrixDimension$SizeX<- as.character(sizes[1])
   matrix.info$MatrixDimension$SizeY<- as.character(sizes[2])
@@ -143,61 +143,60 @@ write_x3p.default<- function(x, file, header.info= x$header.info, general.info=x
   feature.info$Axes$CX$Increment<- as.character(1e-06*increments[1])
   feature.info$Axes$CY$Increment<- as.character(1e-06*increments[2])
   feature.info$Axes$CZ$Increment<- as.character(increments[3])
-  
+
   # Updating the Records : main.xml.
   record3.assign(a1, matrix.info)
   record1.assign(a1, feature.info)
-  
+
 
   # Writing the Surface Matrix as a Binary file
   writeBin(1e-6* as.vector((surface.matrix)), con = "bindata/data.bin")
-  
+
   # Generating the MD% check sum
   chksum<- digest("bindata/data.bin", algo= "md5", serialize=FALSE, file=TRUE)
   xml_set_text(xml_child(a1, search = "Record3/DataLink/MD5ChecksumPointData"), chksum )
-  
+
   # Assigning values to Record 4 in main.xml
   xml_set_text(xml_child(a1, search = "Record4/ChecksumFile"), "md5checksum.hex" )
-  
+
   # Write the Main xml file
   write_xml(a1, "main.xml")
-  
+
   # Writing the md5checksum.hex with checksum for the main.xml
   main.chksum<- digest("main.xml", algo= "md5", serialize=FALSE, file=TRUE)
   write(main.chksum, "md5checksum.hex")
-    
+
   # Write the x3p file and reset path
   # create zipped file one level up, now get out and delete
   zip(zipfile = paste0("../",file), files = dir())
   setwd("./..")
   unlink("x3pfolder",recursive = TRUE)
-  
-  setwd(orig.path) 
-  
+
+  setwd(orig.path)
+
 }
 
 
 #' Write an x3p file taking Lists: general.info, feature.info, matrix.info and matrix: surface.matrix as inputs
-#' 
+#'
 #' @param x x3pobject
 #' @param file where should the file be stored?
 #' @param profiley If FALSE, reorient the matrix to ensure a profile is taken is consistent with surface.matrix (input variable). The default value of Profiley is TRUE
 #' @param template path to xml file with meta information
-#' 
+#'
 #' @export
 #' @import xml2
 #' @importFrom digest digest
 #' @importFrom utils zip
 #' @method write_x3p x3p
-#' 
+#'
 #' @examples
 #' \dontrun{
 #'  # use all defaults:
 #'  write_x3p(surface.matrix=surface.matrix, file="out.x3p", profiley = FALSE)
-#'  
+#'
 #' }
 write_x3p.x3p<- function(x, file, profiley= TRUE, template=system.file("templateXML.xml", package="bulletr")) {
   write_x3p(x = x$surface.matrix, header.info= x$header.info, general.info=x$general.info, feature.info = x$feature.info,
             matrix.info = x$matrix.info, file=file, profiley=profiley, template=template)
 }
-  

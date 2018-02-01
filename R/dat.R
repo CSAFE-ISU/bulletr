@@ -65,7 +65,8 @@ read_dat <- function(path, profiley = TRUE, sample = 1) {
               surface.matrix = g1_mat, 
               feature.info = NULL,
               general.info= NULL,
-              matrix.info = NULL)
+              matrix.info = NULL,
+              bullet_info = NULL)
   class(res) <- "x3p"
   return(res)
 }

@@ -70,7 +70,8 @@ read_x3p <- function(path, profiley = TRUE, automatic = TRUE) {
                 surface.matrix = datamat, 
                 feature.info = input.info$Record1,
                 general.info= input.info$Record2,
-                matrix.info = input.info$Record3)
+                matrix.info = input.info$Record3,
+                bullet_info = bullet_info)
     class(res) <- "x3p"
     return(res)
 }

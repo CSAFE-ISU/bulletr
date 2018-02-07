@@ -54,6 +54,7 @@ get_lag <- function(b1, b2, negperc=10) {
 #' @param b1 dataframe
 #' @param b2 dataframe
 #' @param window width of the window (in indices) to consider for matching
+#' @export
 #' @return list of lag and correlation achieved. The plot shows b2 on b1.
 #' @param b1.left left index of the matching window
 get_lag_max_R <- function(b1, b2, window, b1.left) {
@@ -164,25 +165,25 @@ get_cor <- function(b1, b2, window, b1.left, lag) {
 #' b2 <- fit_loess(b2, b2.gr)$data
 #' b3 <- fit_loess(b3, b3.gr)$data
 #' # matched correlations
-#' get_cor(b1, b2, window = 100, b1.left = 800, lag = match$lag)
-#' get_cor(b1, b2, window = 100, b1.left = 1000, lag = match$lag)
-#' get_cor(b1, b2, window = 100, b1.left = 1200, lag = match$lag)
+#' #get_cor(b1, b2, window = 100, b1.left = 800, lag = match$lag)
+#' #get_cor(b1, b2, window = 100, b1.left = 1000, lag = match$lag)
+#' #get_cor(b1, b2, window = 100, b1.left = 1200, lag = match$lag)
 #' # random correlations
-#' get_cor(b1, b2, window = 100, b1.left = 800, lag = 100)
-#' get_cor(b1, b2, window = 100, b1.left = 1000, lag = -300)
-#' get_cor(b1, b2, window = 100, b1.left = 1200, lag = -500)
+#' #get_cor(b1, b2, window = 100, b1.left = 800, lag = 100)
+#' #get_cor(b1, b2, window = 100, b1.left = 1000, lag = -300)
+#' #get_cor(b1, b2, window = 100, b1.left = 1200, lag = -500)
 #' 
 #' chumbley(b1, b2, window=150, reps=5)
 #' 
 #' match13 <- get_lag_max_R(b1, b3, window = 100, b1.left = 450)
 #' # matched correlations
-#' get_cor(b1, b3, window = 100, b1.left = 800, lag = match13$lag)
-#' get_cor(b1, b3, window = 100, b1.left = 1000, lag = match13$lag)
-#' get_cor(b1, b3, window = 100, b1.left = 1200, lag = match13$lag)
+#' #get_cor(b1, b3, window = 100, b1.left = 800, lag = match13$lag)
+#' #get_cor(b1, b3, window = 100, b1.left = 1000, lag = match13$lag)
+#' #get_cor(b1, b3, window = 100, b1.left = 1200, lag = match13$lag)
 #' # random correlations
-#' get_cor(b1, b3, window = 100, b1.left = 800, lag = 100)
-#' get_cor(b1, b3, window = 100, b1.left = 1000, lag = 300)
-#' get_cor(b1, b3, window = 100, b1.left = 1200, lag = 500)
+#' #get_cor(b1, b3, window = 100, b1.left = 800, lag = 100)
+#' #get_cor(b1, b3, window = 100, b1.left = 1000, lag = 300)
+#' #get_cor(b1, b3, window = 100, b1.left = 1200, lag = 500)
 #' 
 #' chumbley(b1, b3, window=100, reps=5)
 chumbley <- function(b1, b2, window, reps = 3) {
@@ -200,18 +201,18 @@ chumbley <- function(b1, b2, window, reps = 3) {
   align_by <- sample(reps+1, 1)
   
   # find the best match
-  match <- get_lag_max_R(b1, b2, window = window, b1.left = lefts[align_by])
+  mymatch <- get_lag_max_R(b1, b2, window = window, b1.left = lefts[align_by])
 
   # matched correlations
   cor_matched <- sapply(lefts[-align_by], function(left) 
-    get_cor(b1, b2, window = window, b1.left = left, lag = match$lag))
+    get_cor(b1, b2, window = window, b1.left = left, lag = mymatch$lag))
   addons <- lapply(lefts[-align_by], function(left) {
     xs <-  1:window + left 
     geom_point(aes(x=x, y=y), 
-               data=data.frame(x = xs-match$lag, 
+               data=data.frame(x = xs-mymatch$lag, 
                                y=b2$resid[xs]), colour = "red", size = .2)
   })
-  match$plot <- match$plot + addons
+  mymatch$plot <- mymatch$plot + addons
   
   # random correlations
   random_lags <- sample(1:(nx-window), size=reps, replace=FALSE) - lefts[align_by]
@@ -219,7 +220,7 @@ chumbley <- function(b1, b2, window, reps = 3) {
   cor_random <- sapply(random_lags, function(lag) 
     cor(b1$resid[indices], b2$resid[indices+lag], use="pairwise.complete"))  
   #  get_cor(b1, b2, window = window, b1.left = lefts[align_by], lag = lag))
-  list(alignment = list(window = c(lefts[align_by], lefts[align_by]+ window), lag=match$lag, cor=match$cor, plot=match$plot),
+  list(alignment = list(window = c(lefts[align_by], lefts[align_by]+ window), lag=mymatch$lag, cor=mymatch$cor, plot=mymatch$plot),
        test=wilcox.test(cor_matched, cor_random, alternative="greater"), cor_matched, cor_random)
 }
 
@@ -229,6 +230,7 @@ chumbley <- function(b1, b2, window, reps = 3) {
 #' @param b2 vector of equi-distant toolmark values
 #' @param window width of the window (in indices) to consider for matching
 #' @param reps number of replicates to use in the evaluation
+#' @importFrom dplyr lead
 #' @export
 #' @references
 #' Chumbley, L. S., Morris, M. D., Kreiser, M. J., Fisher, C., Craft, J., Genalo, L. J., Davis, S., Faden, D. and Kidd, J. (2010), Validation of Tool Mark Comparisons Obtained Using a Quantitative, Comparative, Statistical Algorithm. Journal of Forensic Sciences, 55: 953–961. \url{doi:10.1111/j.1556-4029.2010.01424.x}
@@ -243,8 +245,8 @@ chumbley <- function(b1, b2, window, reps = 3) {
 #' b2.gr <- b2 %>% get_grooves()
 #' b3.gr <- b3 %>% get_grooves()
 #' # check that the grooves are actually found:
-#' b1.gr$plot
-#' b2.gr$plot
+#' #b1.gr$plot
+#' #b2.gr$plot
 #' # get signatures
 #' b1 <- fit_loess(b1, b1.gr)$data
 #' b2 <- fit_loess(b2, b2.gr)$data

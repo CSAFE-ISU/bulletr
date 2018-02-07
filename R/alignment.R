@@ -5,12 +5,14 @@
 #' @param y vector 
 #' @param min.overlap integer value: what is the minimal number of values between x and y that should be considered?
 #' @return list with ccf values and lags
+#' @export
 #' @examples 
+#' library(dplyr)
 #' x <- runif(20)
 #' my_ccf(x, lead(x, 5))
 #' my_ccf(x, lag(x, 5), min.overlap=3)
 #' x <- runif(100)
-#' bulletr:::my_ccf(x[45:50], x, min.overlap=6)
+#' my_ccf(x[45:50], x, min.overlap=6)
 my_ccf <-  function(x, y, min.overlap = 0.1*max(length(x),length(y))) {
   x <- as.vector(unlist(x))
   y <- as.vector(unlist(y))
@@ -45,6 +47,7 @@ my_ccf <-  function(x, y, min.overlap = 0.1*max(length(x),length(y))) {
 #' @export
 #' @importFrom stats cor
 #' @examples 
+#' library(dplyr)
 #' x <- runif(20)
 #' do_align(x, lead(x, 5))
 #' do_align(x, lag(x, 5), min.overlap=2)

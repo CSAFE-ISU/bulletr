@@ -20,9 +20,10 @@ list with ccf values and lags
 Cross correlation function between two vectors
 }
 \examples{
+library(dplyr)
 x <- runif(20)
 my_ccf(x, lead(x, 5))
 my_ccf(x, lag(x, 5), min.overlap=3)
 x <- runif(100)
-bulletr:::my_ccf(x[45:50], x, min.overlap=6)
+my_ccf(x[45:50], x, min.overlap=6)
 }

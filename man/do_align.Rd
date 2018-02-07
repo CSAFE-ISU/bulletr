@@ -21,6 +21,7 @@ and c) a vector of length y1 with aligned values of y2.
 The first vector serves as a reference, the second vector is shifted, such that it aligns best with the first and has the same length as the first vector.
 }
 \examples{
+library(dplyr)
 x <- runif(20)
 do_align(x, lead(x, 5))
 do_align(x, lag(x, 5), min.overlap=2)

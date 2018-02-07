@@ -4,7 +4,7 @@ Authors@R: c(
     person("Eric", "Hare", email = "erichare@iastate.edu", role = c("aut", "cre")),
     person("Heike", "Hofmann", email = "hofmann@iastate.edu", role = "aut"),
     person("Ganesh", "Krishnan", email = "ganeshk@iastate.edu", role = "aut"))
-Version: 0.1.0.9001
+Version: 0.1.0.9002
 License: MIT
 Date: 2018-01-19
 Description: Analyze bullet lands using nonparametric methods. We provide a

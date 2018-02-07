@@ -150,6 +150,8 @@ get_cor <- function(b1, b2, window, b1.left, lag) {
 #' @param reps number of replicates to use in the evaluation
 #' @export
 #' @examples 
+#' library(dplyr)
+#' 
 #' data(br411)
 #' b1 <- get_crosscut(x = 250, bullet=br411)
 #' b2 <- get_crosscut(x = 150, bullet = br411)
@@ -157,9 +159,6 @@ get_cor <- function(b1, b2, window, b1.left, lag) {
 #' b1.gr <- b1 %>% get_grooves(smoothfactor=30)
 #' b2.gr <- b2 %>% get_grooves()
 #' b3.gr <- b3 %>% get_grooves()
-#' # check that the grooves are actually found:
-#' b1.gr$plot
-#' b2.gr$plot
 #' # get signatures
 #' b1 <- fit_loess(b1, b1.gr)$data
 #' b2 <- fit_loess(b2, b2.gr)$data
@@ -234,6 +233,8 @@ chumbley <- function(b1, b2, window, reps = 3) {
 #' @references
 #' Chumbley, L. S., Morris, M. D., Kreiser, M. J., Fisher, C., Craft, J., Genalo, L. J., Davis, S., Faden, D. and Kidd, J. (2010), Validation of Tool Mark Comparisons Obtained Using a Quantitative, Comparative, Statistical Algorithm. Journal of Forensic Sciences, 55: 953–961. \url{doi:10.1111/j.1556-4029.2010.01424.x}
 #' @examples 
+#' library(dplyr)
+#' 
 #' data(br411)
 #' b1 <- get_crosscut(x = 250, bullet=br411)
 #' b2 <- get_crosscut(x = 150, bullet = br411)

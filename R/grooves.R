@@ -33,7 +33,7 @@ get_grooves <- function(bullet, method = "rollapply", smoothfactor = 15, adjust 
         mean_left = mean_left, 
         mean_right = mean_right, 
         mean_window = mean_window,
-        second_smooth = second_smooth
+        second_smooth = TRUE
       )
     }  
     if (method == "middle") {

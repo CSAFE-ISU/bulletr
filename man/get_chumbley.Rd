@@ -19,6 +19,8 @@ get_chumbley(y1, y2, window, reps = 3)
 Compute a Chumbley test score
 }
 \examples{
+library(dplyr)
+
 data(br411)
 b1 <- get_crosscut(x = 250, bullet=br411)
 b2 <- get_crosscut(x = 150, bullet = br411)

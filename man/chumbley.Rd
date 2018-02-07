@@ -19,6 +19,8 @@ chumbley(b1, b2, window, reps = 3)
 Chumbley test score
 }
 \examples{
+library(dplyr)
+
 data(br411)
 b1 <- get_crosscut(x = 250, bullet=br411)
 b2 <- get_crosscut(x = 150, bullet = br411)
@@ -26,9 +28,6 @@ b3 <- get_crosscut(x = 10, bullet=br411)
 b1.gr <- b1 \%>\% get_grooves(smoothfactor=30)
 b2.gr <- b2 \%>\% get_grooves()
 b3.gr <- b3 \%>\% get_grooves()
-# check that the grooves are actually found:
-b1.gr$plot
-b2.gr$plot
 # get signatures
 b1 <- fit_loess(b1, b1.gr)$data
 b2 <- fit_loess(b2, b2.gr)$data

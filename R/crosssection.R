@@ -12,6 +12,8 @@
 #' @param minccf minimal value of cross correlation to indicate a stable region
 #' @param span The span for the loess smooth function
 #' @param percent_missing maximum percent missing values on the crosscut to be picked
+#' @importFrom x3ptools read_x3p
+#' @importFrom x3ptools x3p_to_df
 #' @export
 bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(50, 500), minccf = 0.9, span = 0.03, percent_missing = 50) {
     get_cc <- function(x, mybullet) {
@@ -29,7 +31,7 @@ bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(
         dframe
     }
     if (is.null(bullet)) bullet <- read_x3p(path)
-    dbr111 <- fortify_x3p(bullet)
+    dbr111 <- x3p_to_df(bullet)
     
     done <- FALSE
     x <- min(xlimits)
@@ -63,10 +65,12 @@ bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(
 #' @param bullet alternative access to the surface measurements. 
 #' @return data frame 
 #' @importFrom zoo na.trim
+#' @importFrom x3ptools read_x3p
+#' @importFrom x3ptools x3p_to_df
 #' @export
 get_crosscut <- function(path = NULL, x = 243.75, bullet = NULL) {
     if (is.null(bullet)) bullet <- read_x3p(path)
-    dbr111 <- na.trim(fortify_x3p(bullet))
+    dbr111 <- na.trim(x3p_to_df(bullet))
     
     pickx <- dbr111$x[which.min(abs(x - unique(dbr111$x)))]
     

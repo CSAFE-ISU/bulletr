@@ -7,7 +7,7 @@
 boot_fit_loess(bullet, groove, B = 1000, alpha = 0.95)
 }
 \arguments{
-\item{bullet}{Bullet as returned from fortify_x3p}
+\item{bullet}{Bullet as returned from x3p_to_df}
 
 \item{groove}{Groove as returned from get_grooves}
 

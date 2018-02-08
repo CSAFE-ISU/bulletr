@@ -14,6 +14,7 @@
 #' @importFrom robustbase lmrob
 #' @importFrom stats lm coef median 
 #' @importFrom utils head tail
+#' @importFrom x3ptools read_x3p
 #' @examples
 #' \dontrun{
 #' # execution takes several minutes
@@ -122,6 +123,7 @@ getTwist <- function(path, bullet = NULL, twistlimit = NULL, cutoff = .75) {
 #' @param sample integer value. take every 1 in sample values from the surface matrix
 #' @param ... parameters passed on to plot_ly call
 #' @importFrom plotly plot_ly
+#' @importFrom x3ptools read_x3p
 #' @export
 #' @examples 
 #' data(br411)
@@ -136,4 +138,71 @@ plot_3d_land <- function(path, bullet = NULL, sample=1, ...) {
     }
     
     plot_ly(z = surfmat, type = "surface", ...)
+}
+
+#' Process x3p file 
+#' 
+#' x3p file of a 3d topological bullet surface is processed at surface crosscut x, 
+#' the bullet grooves in the crosscuts are identified and removed, and a loess smooth 
+#' is used (see \code{?loess} for details) to remove the big structure. 
+#' @param bullet file as returned from read_x3p
+#' @param name name of the bullet
+#' @param x (vector) of surface crosscuts to process (in meters). 
+#' @param grooves The grooves to use as a two element vector, if desired
+#' @param span The span for the loess fit
+#' @param window The mean window around the ideal crosscut
+#' @param ... Additional arguments, passed to the get_grooves function
+#' @return data frame
+#' @import dplyr
+#' @importFrom zoo na.trim
+#' @importFrom x3ptools read_x3p
+#' @importFrom x3ptools x3p_to_df
+#' @export
+#' @examples
+#' data(br411)
+#' br411_processed <- processBullets(br411, name = "br411")
+processBullets <- function(bullet, name = "", x = as.numeric(bullet$feature.info$Axes$CX$Increment[[1]]) * 100, grooves = NULL, span = 0.75, window = 0, ...) {
+    y <- value <- NULL
+    
+    ## Convert x to be meters
+    if (x > 1) {
+        x <- x * 1e-6
+    }
+    
+    if (!is.data.frame(bullet)) {
+        crosscuts <- unique(x3p_to_df(bullet)$x)
+        crosscuts <- crosscuts[crosscuts >= min(x)]
+        crosscuts <- crosscuts[crosscuts <= max(x)]
+    } else {
+        crosscuts <- x
+    }
+    
+    if (length(x) > 2) crosscuts <- crosscuts[crosscuts %in% x]
+    
+    list_of_fits <- lapply(crosscuts, function(myx) {
+        if (!is.data.frame(bullet)) bullet <- x3p_to_df(bullet)
+        
+        br111 <- bullet %>%
+            na.trim %>%
+            filter(x >= myx - window, x <= myx + window) %>%
+            group_by(y) %>%
+            summarise(x = myx, value = mean(value, na.rm = TRUE)) %>%
+            dplyr::select(x, y, value) %>%
+            as.data.frame
+        if (is.null(grooves)) {
+            br111.groove <- get_grooves(br111, ...)
+        } else {
+            br111.groove <- list(groove = grooves)
+        }
+        
+        myspan <- span
+        if (myspan > 1) {
+            ## Use the nist method
+            myspan <- myspan / diff(br111.groove$groove)
+        }
+        fit_loess(br111, br111.groove, span = myspan)$resid$data
+    })
+    lof <- list_of_fits %>% bind_rows
+    
+    data.frame(lof, bullet = name, stringsAsFactors = FALSE)
 }

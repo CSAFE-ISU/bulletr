@@ -1,6 +1,6 @@
 #' Fit a LOESS model with bootstrap samples
 #' 
-#' @param bullet Bullet as returned from fortify_x3p
+#' @param bullet Bullet as returned from x3p_to_df
 #' @param groove Groove as returned from get_grooves
 #' @param B number of Bootstrap samples
 #' @param alpha The significance level
@@ -41,7 +41,7 @@ boot_fit_loess <- function(bullet, groove, B=1000, alpha=0.95) {
 #' A loess regression is fit to the remaining surface measurements and residuals are calculated.
 #' The most extreme 0.25% of residuals are filtered from further consideration.
 #' The result is called the signature of the bullet land.
-#' @param bullet The bullet object as returned from fortify_x3p
+#' @param bullet The bullet object as returned from x3p_to_df
 #' @param groove vector of two numeric values indicating the location of the left and right groove. 
 #' @param span The span to use for the loess regression
 #' @return a list of a data frame of the original bullet measurements extended by loess fit, residuals, and standard errors and two plots: a plot of the fit, and a plot of the bullet's land signature. 
@@ -51,7 +51,7 @@ fit_loess <- function(bullet, groove, span = 0.75) {
     y <- NULL
     chop <- NULL
     
-    bullet_filter <- subset(bullet, !is.na(value) & y > groove$groove[1] & y < groove$groove[2])
+    bullet_filter <- subset(bullet, !is.na(value) & y > min(groove$groove) & y < max(groove$groove))
     my.loess <- loess(value ~ y, data = bullet_filter, span = span)
     bullet_filter$fitted <- fitted(my.loess)
     bullet_filter$resid <- resid(my.loess)

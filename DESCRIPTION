@@ -4,9 +4,9 @@ Authors@R: c(
     person("Eric", "Hare", email = "erichare@iastate.edu", role = c("aut", "cre")),
     person("Heike", "Hofmann", email = "hofmann@iastate.edu", role = "aut"),
     person("Ganesh", "Krishnan", email = "ganeshk@iastate.edu", role = "aut"))
-Version: 0.1.0.9002
+Version: 0.1.0.9003
 License: MIT
-Date: 2018-01-19
+Date: 2018-02-08
 Description: Analyze bullet lands using nonparametric methods. We provide a
     reading routine for x3p files (see <http://www.openfmc.org> for more
     information) and a host of analysis functions designed to assess the
@@ -25,7 +25,8 @@ Imports:
     smoother,
     readr (>= 1.1.0),
     digest (>= 0.6.12),
-    rgl
+    rgl,
+    x3ptools
 Depends:
     R (>= 3.1)
 Suggests: knitr, rmarkdown

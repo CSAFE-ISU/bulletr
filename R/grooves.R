@@ -162,7 +162,7 @@ get_grooves_rollapply <- function(bullet, smoothfactor = 15, adjust = 10, groove
 
   smoothed_diff <- floor(lengthdiff/2)
   p <- ggplot() + geom_point(aes(xvals, yvals), size = .3) + 
-    geom_line(aes(xvals[((smoothed_diff+1):(length(xvals)-smoothed_diff))], smoothed_truefalse), colour = "red") + 
+    #geom_line(aes(xvals[((smoothed_diff+1):(length(xvals)-smoothed_diff))], smoothed_truefalse), colour = "red") + 
     
     theme_bw() +
     # geom_vline(xintercept = xvals[plot_peak_ind], colour = "red") +

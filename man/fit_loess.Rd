@@ -7,7 +7,7 @@
 fit_loess(bullet, groove, span = 0.75)
 }
 \arguments{
-\item{bullet}{The bullet object as returned from fortify_x3p}
+\item{bullet}{The bullet object as returned from x3p_to_df}
 
 \item{groove}{vector of two numeric values indicating the location of the left and right groove.}
 

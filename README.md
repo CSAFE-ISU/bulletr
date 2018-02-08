@@ -102,12 +102,12 @@ Analyze bullet striations using nonparametric methods
     subLOFx1 <- subset(lofX, bullet==b12[1])
     subLOFx2 <- subset(lofX, bullet==b12[2]) 
 
-    ys <- dplyr::intersect(round(subLOFx1$y, digits = 3), round(subLOFx2$y, digits = 3))
+    ys <- dplyr::intersect(subLOFx1$y, subLOFx2$y)
 
-    idx1 <- which(round(subLOFx1$y, digits = 3) %in% ys)
-    idx2 <- which(round(subLOFx2$y, digits = 3) %in% ys)
+    idx1 <- which(subLOFx1$y %in% ys)
+    idx2 <- which(subLOFx2$y %in% ys)
 
-    g1_inc_x <- h44_g1$header.info$profile_inc
+    g1_inc_x <- h44_g1$header.info$incrementY
     
     distr.dist <- sqrt(mean(((subLOFx1$val[idx1] - subLOFx2$val[idx2]) * g1_inc_x / 1000)^2, na.rm=TRUE))
     distr.sd <- sd(subLOFx1$val * g1_inc_x / 1000, na.rm=TRUE) + sd(subLOFx2$val * g1_inc_x / 1000, na.rm=TRUE)
@@ -127,10 +127,10 @@ Analyze bullet striations using nonparametric methods
              l50 = l30 - smoothavgl30)
 
     final_doublesmoothed <- doublesmoothed %>%
-      filter(round(y, digits = 3) %in% ys)
+      filter(y %in% ys)
 
-    rough_cor <- cor(na.omit(final_doublesmoothed$l50[final_doublesmoothed$bullet == b12[1]]), 
-                     na.omit(final_doublesmoothed$l50[final_doublesmoothed$bullet == b12[2]]),
+    rough_cor <- cor(final_doublesmoothed$l50[final_doublesmoothed$bullet == b12[1]], 
+                     final_doublesmoothed$l50[final_doublesmoothed$bullet == b12[2]],
                      use = "pairwise.complete.obs")
 
     ccf_temp <- c(ccf=res$ccf, rough_cor = rough_cor, lag=res$lag / 1000, 
@@ -155,7 +155,7 @@ Analyze bullet striations using nonparametric methods
       as.data.frame() %>%
       dplyr::select(profile1_id = b1, profile2_id = b2, ccf, rough_cor, lag, D, sd_D, signature_length, overlap,
                     matches, mismatches, cms, non_cms, sum_peaks)
-    ccf[,-2] <- lapply(ccf[,-(1:2)], function(x) { as.numeric(as.character(x)) })
+    ccf[,-c(1, 2)] <- lapply(ccf[,-(1:2)], function(x) { as.numeric(as.character(x)) })
 ```
     
 10. Get Predicted Probability of Match
@@ -163,7 +163,7 @@ Analyze bullet striations using nonparametric methods
 
 ```r
     ccf$forest <- predict(rtrees, newdata = ccf, type = "prob")[,2]
-ccf$forest
+    ccf$forest
 ```
 
 ```

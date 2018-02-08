@@ -20,8 +20,8 @@ bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(
       # get cross cut, and smooth it
         pickx <- mybullet$x[which.min(abs(x - unique(mybullet$x)))]
         br111 <- mybullet[mybullet$x == pickx,]
-        inc <- bullet$header.info$profile_inc
-        br111.groove <- get_grooves(br111, groove_cutoff = 400/inc*1.5625, smoothfactor = 15/inc*1.5625, adjust = 10/inc*1.5625)
+        inc <- bullet$header.info$incrementY
+        br111.groove <- get_grooves(br111, groove_cutoff = 400, smoothfactor = 15, adjust = 10)
         #    br111.groove$plot
         #    browser()
         dframe <- fit_loess(br111, br111.groove)$resid$data
@@ -37,7 +37,7 @@ bulletCheckCrossCut <- function(path, bullet = NULL, distance = 25, xlimits = c(
     x <- min(xlimits)
     first_cc <- get_cc(x, mybullet = dbr111)
 
-    while(dim(first_cc)[1] < bullet$header.info$num_obs_per_profile*percent_missing/100) {
+    while(dim(first_cc)[1] < bullet$header.info$sizeX*percent_missing/100) {
       x <- x + distance
       first_cc <- get_cc(x, mybullet = dbr111)
     }

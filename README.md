@@ -32,7 +32,7 @@ Analyze bullet striations using nonparametric methods
 
 
 ```r
-    h44_g1 <- read_dat("~/Downloads/H44-G-1.dat", profiley=FALSE)
+    h44_g1 <- read_dat("~/Downloads/H44-G-1.dat", profiley = FALSE)
     h44_gx1 <- read_dat("~/Downloads/H44-G-2.dat", profiley = FALSE)
 ```
     

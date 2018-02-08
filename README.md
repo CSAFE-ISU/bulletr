@@ -23,47 +23,9 @@ Analyze bullet striations using nonparametric methods
 
 ```r
     library(dplyr)
-```
-
-```
-## 
-## Attaching package: 'dplyr'
-```
-
-```
-## The following objects are masked from 'package:stats':
-## 
-##     filter, lag
-```
-
-```
-## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union
-```
-
-```r
+    library(x3ptools)
     library(bulletr)
     library(randomForest)
-```
-
-```
-## randomForest 4.6-12
-```
-
-```
-## Type rfNews() to see new features/changes/bug fixes.
-```
-
-```
-## 
-## Attaching package: 'randomForest'
-```
-
-```
-## The following object is masked from 'package:dplyr':
-## 
-##     combine
 ```
   
 2. Read in the bullet file data, and convert to the appropriate x3p format (if necessary):
@@ -71,32 +33,10 @@ Analyze bullet striations using nonparametric methods
 
 ```r
     h44_g1 <- read_dat("~/Downloads/H44-G-1.dat", profiley=FALSE)
-```
-
-```
-## Parsed with column specification:
-## cols(
-##   x = col_double(),
-##   y = col_double(),
-##   value = col_character()
-## )
-```
-
-```r
     h44_gx1 <- read_dat("~/Downloads/H44-G-2.dat", profiley = FALSE)
-```
-
-```
-## Parsed with column specification:
-## cols(
-##   x = col_double(),
-##   y = col_double(),
-##   value = col_character()
-## )
 ```
     
 3. Get the ideal cross sections
-
 
 
 ```r

@@ -1,86 +1,3 @@
-#' Read an x3p file as an R Data Frame
-#' 
-#' @param path The file path to the x3p file
-#' @param profiley If TRUE, rotate the matrix to ensure a profile is taken across y
-#' @param automatic use file dimensions to determine whether file needs to be rotated. Assumes long dimension is on y, overwrites profiley. Only works sensibly for bullet lands. For more control, set automatic to FALSE
-#' 
-#' @export
-#' @import xml2 
-#' @importFrom utils unzip
-#' 
-#' @examples
-#' \dontrun{
-#' br411 <- read_x3p("Br4 Bullet 4-1.x3p")
-#' }
-#'
-read_x3p <- function(path, profiley = TRUE, automatic = FALSE) {
-
-    ## Create a temp directory to unzip x3p file
-    mydir <- tempdir()
-    result <- unzip(path, exdir = mydir)
-    ## see what we got: 
-    data <- grep(".bin$", result) # data has extension .bin
-    meta <- grep(".xml$", result) # meta info has extension .xml
-    # if we have not exactly one of each we have a problem:
-    stopifnot(length(data)==1, length(meta) == 1) # nice error messages would be good
-    
-    ## Should contain data.bin and valid.bin
-    bullet_data_dir <- file.path(mydir, "bindata", dir(file.path(mydir, "bindata")))
-    bullet_data <- result[data]
-    
-    ## Get the information on the bullet
-    bullet_info <- read_xml(result[meta])
-    bullet_children <- xml_children(bullet_info)
-    bullet_childinfo <- xml_children(bullet_children)
-    
-    ## Convert to a list
-    bullet_info_list <- lapply(bullet_childinfo, as_list)
-    bullet_info_unlist <- unlist(bullet_info_list, recursive = FALSE)
-    
-    ## Get the data types
-    data_types <- sapply(bullet_info_list[[3]], `[[`, 2)
-    
-    ## Read the binary matrix
-    sizes <- as.numeric(c(bullet_info_unlist$SizeX[[1]], bullet_info_unlist$SizeY[[1]], bullet_info_unlist$SizeZ[[1]]))
-    increments <- as.numeric(c(bullet_info_unlist$CX$Increment[[1]], bullet_info_unlist$CY$Increment[[1]], bullet_info_unlist$CZ$Increment[[1]]))
-    datamat <- matrix(readBin(bullet_data, what = numeric(), n = prod(sizes)),
-                      nrow = sizes[1],
-                      ncol = sizes[2]) * 1e6
-    
-    if (automatic) {
-      profiley <- sizes[2] > sizes[1]
-    }
-      
-    
-    ## Rotate the matrix
- #   if (profiley && sizes[2] > sizes[1]) {
-    if (profiley) { # clock-wise rotation by 90 degrees
-        sizes <- sizes[c(2, 1, 3)]
-        increments <- increments[c(2, 1, 3)]
-        
-        datamat <- t(datamat)
-        datamat <- apply(datamat, 2, rev)
-    }
-    
-    ## Store some metadata
-    bullet_metadata <- list(num_profiles = sizes[2],
-                            num_obs_per_profile = sizes[1],
-                            profile_inc = increments[2] * 1e6,
-                            obs_inc = increments[1] * 1e6)
-    
-    #plot_ly(z = ~datamat) %>% add_surface()
-    input.info<- as_list(bullet_info)
-    # xml2 version update
-    input.info<- input.info[[1]]
-    res <- list(header.info = bullet_metadata,
-                surface.matrix = datamat, 
-                feature.info = input.info$Record1,
-                general.info= input.info$Record2,
-                matrix.info = input.info$Record3,
-                bullet_info = bullet_info)
-    class(res) <- "x3p"
-    return(res)
-}
 
 
 #' Convert an x3p file into a data frame
@@ -95,6 +12,7 @@ read_x3p <- function(path, profiley = TRUE, automatic = FALSE) {
 #' br411_fort <- fortify_x3p(br411)
 #' head(br411_fort)
 fortify_x3p <- function(x3p) {
+  .Deprecated("x3p_to_df", msg="use x3ptools::x3p_to_df instead")
     info <- x3p$header.info
     
     df <- data.frame(expand.grid(x=1:info$num_profiles, y=1:info$num_obs_per_profile), 
@@ -118,7 +36,8 @@ fortify_x3p <- function(x3p) {
 #' br411_unfort <- unfortify_x3p(br411_fort)
 #' identical(br411_unfort, br411)
 unfortify_x3p <- function(df) {
-    my.info <- attr(df, "info")
+  .Deprecated("df_to_x3p", msg="use x3ptools::df_to_x3p instead")
+  my.info <- attr(df, "info")
     my.lst <- list(header.info = my.info, 
                    surface.matrix = matrix(df$value, 
                                            nrow = length(unique(df$y)), 
@@ -129,31 +48,6 @@ unfortify_x3p <- function(df) {
     return(my.lst)
 }
 
-#' Sample every X element of a data frame
-#' 
-#' Sample every X element of a data frame in x and y direction
-#' @param dframe data frame with x and y variable
-#' @param byxy (vector) of numeric value indicating the sapling resolution. If a single number, the same resolution is used for x and y.
-#' @return subset of the input variable
-#' @export
-#' @examples
-#' data(br411)
-#' br411_fort <- fortify_x3p(br411)
-#' br411_sample <- sample_x3p(br411_fort, byxy = c(4, 4))
-#' head(br411_sample)
-sample_x3p <- function(dframe, byxy = c(2, 2)) {
-    x <- NULL
-    y <- NULL
-    # use fortified data set
-    # use only every byxy sample in x and y direction 
-    if(length(byxy)==1) byxy <- rep(byxy, length=2)
-    xn <- sort(as.numeric(unique(dframe$x)))
-    yn <- sort(as.numeric(unique(dframe$y)))
-    
-    xseq <- xn[seq(1, length(xn), by=byxy[1])] 
-    yseq <- yn[seq(1, length(yn), by=byxy[2])] 
-    subset(dframe, (x %in% xseq) & (y %in% yseq))
-}
 
 #' Process x3p file 
 #' 
@@ -216,29 +110,5 @@ processBullets <- function(bullet, name = "", x = 100, grooves = NULL, span = 0.
 }
 
 
-#' Convert an x3p file into a data frame
-#' 
-#' An x3p file consists of a list with header info and a 2d matrix with scan depths. 
-#' fortify turns the matrix into a data frame, using the parameters of the header as necessary.
-#' @param x3p a file in x3p format as returned by function read_x3p
-#' @return data frame with variables x, y, and value
-#' @export
-#' @examples 
-#' data(br411)
-#' br411_fort <- fortify(br411)
-#' head(br411_fort)
-fortify <- function(x3p) {
-  info <- x3p$header.info
-  
-  df <- data.frame(expand.grid(
-    x=1:info$num_obs_per_profile,
-    y=info$num_profiles:1), 
-    value=as.vector(x3p$surface.matrix))
-  df$y <- (df$y-1) * info$obs_inc
-  df$x <- (df$x-1) * info$profile_inc
-  
-  attr(df, "info") <- info
-  
-  df
-}
+
   

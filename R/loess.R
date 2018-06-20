@@ -50,7 +50,9 @@ fit_loess <- function(bullet, groove, span = 0.75) {
     value <- NULL
     y <- NULL
     chop <- NULL
-    
+
+    # HH Mar 22: we should use lowess rather than loess
+        
     bullet_filter <- subset(bullet, !is.na(value) & y > min(groove$groove) & y < max(groove$groove))
     my.loess <- loess(value ~ y, data = bullet_filter, span = span)
     bullet_filter$fitted <- fitted(my.loess)

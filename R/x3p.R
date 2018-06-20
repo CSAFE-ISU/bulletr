@@ -59,7 +59,7 @@ unfortify_x3p <- function(df) {
 #' @param x (vector) of surface crosscuts to process. 
 #' @param grooves The grooves to use as a two element vector, if desired
 #' @param span The span for the loess fit
-#' @param window The mean window around the ideal crosscut
+#' @param window The window around the ideal crosscut
 #' @param ... Additional arguments, passed to the get_grooves function
 #' @return data frame
 #' @import dplyr
@@ -68,7 +68,8 @@ unfortify_x3p <- function(df) {
 #' @examples
 #' data(br411)
 #' br411_processed <- processBullets(br411, name = "br411")
-processBullets <- function(bullet, name = "", x = 100, grooves = NULL, span = 0.75, window = 0, ...) {
+processBullets <- function(bullet, name = "", x = 100, grooves = NULL, span = 0.75, 
+                           window = 1, ...) {
     y <- value <- NULL
     
     if (!is.data.frame(bullet)) {

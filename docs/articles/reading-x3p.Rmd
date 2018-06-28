@@ -1,0 +1,44 @@
+---
+title: "Reading x3p files"
+author: "Heike Hofmann"
+date: "1/26/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Once the `bulletr` package is installed from the CSAFE github repository (using the command `devtools::install_github("isu-csafe/bulletr")`), the x3p file for testing can be accessed using the following lines of code:
+```{r}
+fpath <- system.file(path=".", file="csafe-logo.x3p", package="bulletr")
+
+library(bulletr)
+logo <- read_x3p(fpath)
+
+# replace the string below with the path to your local x3p test file
+testpath <- "~/CSAFE/x3p-test/Symmetry test pattern.x3p"
+test <- read_x3p(testpath)
+```
+
+The command `fortify` creates a data frame from the surface matrix: 
+```{r}
+logo.df <- bulletr:::fortify(logo)
+test.df <- bulletr:::fortify(test)
+```
+
+In the last step we are visualizing the surface matrix in a tile plot:
+```{r, message = FALSE}
+library(ggplot2)
+library(tidyverse)
+
+logo.df %>% ggplot(aes(x = x,  y=y, fill=value)) + geom_tile() +
+  scale_fill_gradient2(low="darkblue", high = "darkorange",
+                       midpoint=.4) 
+
+
+test.df %>% ggplot(aes(x = x,  y=y, fill=value)) + geom_tile() +
+scale_fill_gradient2(low="darkblue", high = "darkorange", midpoint=127)
+```
+

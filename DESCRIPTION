@@ -11,8 +11,8 @@ Description: Analyze bullet lands using nonparametric methods. We provide a
     reading routine for x3p files (see <http://www.openfmc.org> for more
     information) and a host of analysis functions designed to assess the
     probability that two bullets were fired from the same gun barrel.
-URL: https://github.com/erichare/bulletr
-BugReports: https://github.com/erichare/bulletr/issues
+URL: https://github.com/csafe-isu/bulletr
+BugReports: https://github.com/csafe-isu/bulletr/issues
 Imports:
     xml2,
     zoo,

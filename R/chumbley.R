@@ -149,9 +149,7 @@ get_cor <- function(b1, b2, window, b1.left, lag) {
 #' @param b2 dataframe
 #' @param window width of the window (in indices) to consider for matching
 #' @param reps number of replicates to use in the evaluation
-#' @export
 #' @examples 
-#' library(dplyr)
 #' 
 #' data(br411)
 #' b1 <- get_crosscut(x = 250, bullet=br411)

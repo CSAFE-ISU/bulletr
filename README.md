@@ -3,8 +3,6 @@ bulletr
 Eric Hare, Heike Hofmann, Ganesh Krishnan
 June 28, 2018
 
-Analyze bullet striations using nonparametric methods
-
 [![CRAN
 Status](http://www.r-pkg.org/badges/version/bulletr)](https://cran.r-project.org/package=bulletr)
 [![CRAN RStudio mirror
@@ -15,6 +13,8 @@ developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repo
 [![Travis-CI Build
 Status](https://travis-ci.org/heike/bulletr.svg?branch=master)](https://travis-ci.org/isu-csafe/bulletr)
 [![Last-changedate](https://img.shields.io/badge/last%20change-2018--06--28-yellowgreen.svg)](/commits/master)
+
+Analyze bullet striations using nonparametric methods
 
 # Comparing two lands
 

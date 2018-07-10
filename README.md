@@ -1,18 +1,17 @@
-bulletr
-================
-Eric Hare, Heike Hofmann, Ganesh Krishnan
-June 28, 2018
+---
+title: "bulletr"
+author: "Eric Hare, Heike Hofmann, Ganesh Krishnan"
+date: "July 09, 2018"
+output: 
+  html_document:
+    keep_md: true
+---
 
-[![CRAN
-Status](http://www.r-pkg.org/badges/version/bulletr)](https://cran.r-project.org/package=bulletr)
-[![CRAN RStudio mirror
-downloads](http://cranlogs.r-pkg.org/badges/bulletr)](http://www.r-pkg.org/pkg/bulletr)
-[![Project Status: Active – The project has reached a stable, usable
-state and is being actively
-developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
-[![Travis-CI Build
-Status](https://travis-ci.org/heike/bulletr.svg?branch=master)](https://travis-ci.org/isu-csafe/bulletr)
-[![Last-changedate](https://img.shields.io/badge/last%20change-2018--06--28-yellowgreen.svg)](/commits/master)
+[![CRAN Status](http://www.r-pkg.org/badges/version/bulletr)](https://cran.r-project.org/package=bulletr) [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/bulletr)](http://www.r-pkg.org/pkg/bulletr) 
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
+[![Travis-CI Build Status](https://travis-ci.org/heike/bulletr.svg?branch=master)](https://travis-ci.org/isu-csafe/bulletr)
+[![Last-changedate](https://img.shields.io/badge/last%20change-2018--07--09-yellowgreen.svg)](/commits/master)
+
 
 Analyze bullet striations using nonparametric methods
 
@@ -20,95 +19,107 @@ Analyze bullet striations using nonparametric methods
 
 ## HOW-TO
 
-1.  Load Libraries
+1. Load Libraries
+    
 
-<!-- end list -->
-
-``` r
+```r
     library(dplyr)
 ```
 
-    ## 
-    ## Attaching package: 'dplyr'
+```
+## 
+## Attaching package: 'dplyr'
+```
 
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
+```
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+```
 
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
+```
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
 
-``` r
+```r
     library(bulletr)
     library(randomForest)
 ```
 
-    ## randomForest 4.6-14
+```
+## randomForest 4.6-14
+```
 
-    ## Type rfNews() to see new features/changes/bug fixes.
+```
+## Type rfNews() to see new features/changes/bug fixes.
+```
 
-    ## 
-    ## Attaching package: 'randomForest'
+```
+## 
+## Attaching package: 'randomForest'
+```
 
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     combine
+```
+## The following object is masked from 'package:dplyr':
+## 
+##     combine
+```
+  
+2. Read in the bullet file data, and convert to the appropriate x3p format (if necessary):
 
-2.  Read in the bullet file data, and convert to the appropriate x3p
-    format (if necessary):
 
-<!-- end list -->
-
-``` r
+```r
     h44_g1 <- read_dat("~/Downloads/H44-G-1.dat", profiley=FALSE)
 ```
 
-    ## Parsed with column specification:
-    ## cols(
-    ##   x = col_double(),
-    ##   y = col_double(),
-    ##   value = col_character()
-    ## )
+```
+## Parsed with column specification:
+## cols(
+##   x = col_double(),
+##   y = col_double(),
+##   value = col_character()
+## )
+```
 
-``` r
+```r
     h44_gx1 <- read_dat("~/Downloads/H44-G-2.dat", profiley = FALSE)
 ```
 
-    ## Parsed with column specification:
-    ## cols(
-    ##   x = col_double(),
-    ##   y = col_double(),
-    ##   value = col_character()
-    ## )
+```
+## Parsed with column specification:
+## cols(
+##   x = col_double(),
+##   y = col_double(),
+##   value = col_character()
+## )
+```
+    
+3. Get the ideal cross sections
 
-3.  Get the ideal cross
-sections
 
-<!-- end list -->
 
-``` r
+```r
     cc_g1 <- bulletCheckCrossCut(path = "~/Downloads/H44-G-1.dat", bullet = h44_g1)
     cc_gx1 <- bulletCheckCrossCut(path = "~/Downloads/H44-GX-1.dat", bullet = h44_gx1)
 
     ccdata_g1 <- get_crosscut(bullet = h44_g1, x = cc_g1) 
     ccdata_gx1 <- get_crosscut(bullet = h44_gx1, x = cc_gx1)
 ```
+    
+4. Get the groove locations
 
-4.  Get the groove locations
 
-<!-- end list -->
-
-``` r
+```r
     grooves_g1 <- get_grooves(bullet = ccdata_g1)
     grooves_gx1 <- get_grooves(bullet = ccdata_gx1)
 ```
+    
+6. Process the bullets to extract LOESS residuals
 
-6.  Process the bullets to extract LOESS residuals
 
-<!-- end list -->
-
-``` r
+```r
     g1_processed <- processBullets(bullet = ccdata_g1,
                                name = "g1",
                                x = ccdata_g1$x[1],
@@ -121,34 +132,31 @@ sections
                                    span = 0.75,
                                    grooves = grooves_gx1$groove)
 ```
+    
+7. Smooth the processed bullet profiles
 
-7.  Smooth the processed bullet profiles
 
-<!-- end list -->
-
-``` r
+```r
     all_smoothed <- g1_processed %>% 
         rbind(gx1_processed) %>%
         bulletSmooth(span = 0.03) %>%
         filter(!is.na(l30))
 ```
+   
+8. Detect peaks and valleys in the aligned signatures
 
-8.  Detect peaks and valleys in the aligned signatures
 
-<!-- end list -->
-
-``` r
+```r
     res <- bulletGetMaxCMS(filter(all_smoothed, bullet == "g1"), 
                            filter(all_smoothed, bullet == "gx1"), 
                            column = "l30", 
                            span = 25)
 ```
+    
+9. Extract Features
 
-9.  Extract Features
 
-<!-- end list -->
-
-``` r
+```r
     lofX <- res$bullets
     b12 <- unique(lofX$bullet)
 
@@ -213,14 +221,18 @@ sections
                     matches, mismatches, cms, non_cms, sum_peaks)
     ccf[,-(1:2)] <- lapply(ccf[,-(1:2)], function(x) { as.numeric(as.character(x)) })
 ```
-
+    
 10. Get Predicted Probability of Match
 
-<!-- end list -->
 
-``` r
+```r
     ccf$forest <- predict(rtrees, newdata = ccf, type = "prob")[,2]
 ccf$forest
 ```
 
-    ## [1] 0.16
+```
+## [1] 0.16
+```
+    
+
+An interactive interface for doing comparisons is available https://oaiti.org/apps/bulletmatcher/

@@ -23,7 +23,7 @@ get_peaks <- function(loessdata, column = "resid", smoothfactor = 35, striae = T
     
     peaks <- loessdata$y[which(test) + smoothfactor]
     valleys <- loessdata$y[which(test2) + smoothfactor]
-    peaks.heights <- smoothed_truefalse[which(test) + 1]
+    peaks.heights <- loessdata[,column][which(test) + smoothfactor]
     valleys.heights <- loessdata[,column][which(test2) + smoothfactor]
     
     # adding on some extra stats
